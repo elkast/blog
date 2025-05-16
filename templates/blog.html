@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Livres & Articles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Livres & Articles">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                    <li><a href="{{ url_for('livres') if 'livres' in url_for_map else '#' }}">Livres</a></li>
+                    <li><a href="{{ url_for('articles') }}">Articles</a></li>
+                    <li><a href="{{ url_for('blog') }}" class="active">Blog</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="cart-panel">
+        <div class="cart-header">
+            <h3>Votre Panier</h3>
+            <button class="close-cart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items">
+            <!-- Cart items will be added here dynamically -->
+        </div>
+        <div class="cart-actions">
+            <button class="btn checkout-btn">Procéder au paiement</button>
+            <button class="btn continue-shopping">Continuer vos achats</button>
+        </div>
+    </div>
+    
+    <section class="page-header">
+        <div class="container">
+            <h1>Notre Blog</h1>
+            <p>Actualités, conseils et critiques littéraires</p>
+        </div>
+    </section>
+    
+    <section class="section">
+        <div class="container blog-container">
+            <div class="blog-main">
+                {% if articles %}
+                    {% for article in articles %}
+                    <div class="post full-post">
+                        <div class="post-image">
+                            <img src="{{ url_for('static', filename='blog1.png') }}" alt="{{ article.title }}">
+                        </div>
+                        <div class="post-content">
+                            <h2>{{ article.title }}</h2>
+                            <p class="date">{{ article.date_posted.strftime('%d %B %Y') }} | Par Admin</p>
+                            <div class="post-text">
+                                <p>{{ article.content|truncate(200) }}</p>
+                                <a href="{{ url_for('article', article_id=article.id) }}" class="read-more">Lire l'article complet</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="post full-post">
+                        <div class="post-image">
+                            <img src="{{ url_for('static', filename='blog1.png') }}" alt="Les tendances littéraires de 2023">
+                        </div>
+                        <div class="post-content">
+                            <h2>Les tendances littéraires de 2023</h2>
+                            <p class="date">23 juin 2023 | Par Marie Leclerc</p>
+                            <div class="post-text">
+                                <p>Découvrez les genres et les styles qui dominent le monde littéraire cette année. De la fiction climatique aux récits immersifs en réalité virtuelle, le paysage littéraire évolue constamment...</p>
+                                <p>Les lecteurs d'aujourd'hui se tournent de plus en plus vers des œuvres qui reflètent les préoccupations contemporaines, telles que le changement climatique, la technologie et l'inclusion sociale.</p>
+                                <p>Parallèlement, on observe un regain d'intérêt pour les classiques revisités et les récits qui mêlent plusieurs genres littéraires...</p>
+                                <a href="#" class="read-more">Lire l'article complet</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="post full-post">
+                        <div class="post-image">
+                            <img src="{{ url_for('static', filename='blog2.png') }}" alt="Comment choisir le livre parfait pour l'été">
+                        </div>
+                        <div class="post-content">
+                            <h2>Comment choisir le livre parfait pour l'été</h2>
+                            <p class="date">15 juin 2023 | Par Jean Dubois</p>
+                            <div class="post-text">
+                                <p>Nos conseils pour trouver la lecture idéale pour vos vacances estivales. Que vous soyez à la plage, en montagne ou dans votre jardin, le choix du livre parfait peut transformer votre expérience...</p>
+                                <p>Pour beaucoup, l'été est synonyme de détente et de découvertes littéraires. C'est le moment idéal pour explorer de nouveaux genres ou se plonger dans ces livres que vous reportez depuis des mois...</p>
+                                <a href="#" class="read-more">Lire l'article complet</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="post full-post">
+                        <div class="post-image">
+                            <img src="{{ url_for('static', filename='more_blog.png') }}" alt="Interview exclusive avec Sophie Martin">
+                        </div>
+                        <div class="post-content">
+                            <h2>Interview exclusive avec Sophie Martin, auteure de "Voyage Intérieur"</h2>
+                            <p class="date">10 juin 2023 | Par Philippe Leroy</p>
+                            <div class="post-text">
+                                <p>Nous avons eu le plaisir de rencontrer Sophie Martin pour discuter de son dernier roman, son processus d'écriture et ses sources d'inspiration...</p>
+                                <p>"L'écriture est pour moi un voyage personnel avant d'être une histoire à partager", nous confie l'auteure dont le roman fait sensation depuis sa sortie le mois dernier...</p>
+                                <a href="#" class="read-more">Lire l'article complet</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <div class="pagination">
+                    <a href="#" class="active">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#" class="next">Suivant <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="blog-sidebar">
+                <div class="sidebar-widget">
+                    <h3>Catégories</h3>
+                    <ul class="category-list">
+                        <li><a href="#">Actualités littéraires (8)</a></li>
+                        <li><a href="#">Critiques de livres (15)</a></li>
+                        <li><a href="#">Interviews d'auteurs (6)</a></li>
+                        <li><a href="#">Conseils de lecture (12)</a></li>
+                        <li><a href="#">Événements (4)</a></li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h3>Articles Populaires</h3>
+                    <div class="popular-posts">
+                        <div class="mini-post">
+                            <img src="{{ url_for('static', filename='more_blog.png') }}" alt="Article populaire">
+                            <div>
+                                <h4>Les meilleurs livres de 2022</h4>
+                                <p class="date">5 janvier 2023</p>
+                            </div>
+                        </div>
+                        <div class="mini-post">
+                            <img src="{{ url_for('static', filename='more_blog.png') }}" alt="Article populaire">
+                            <div>
+                                <h4>Guide des clubs de lecture</h4>
+                                <p class="date">28 mai 2023</p>
+                            </div>
+                        </div>
+                        <div class="mini-post">
+                            <img src="{{ url_for('static', filename='more_blog.png') }}" alt="Article populaire">
+                            <div>
+                                <h4>Comment organiser sa bibliothèque</h4>
+                                <p class="date">12 avril 2023</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h3>Tags</h3>
+                    <div class="tags">
+                        <a href="#">Littérature</a>
+                        <a href="#">Roman</a>
+                        <a href="#">Science-Fiction</a>
+                        <a href="#">Été</a>
+                        <a href="#">Auteurs</a>
+                        <a href="#">Nouveautés</a>
+                        <a href="#">Classiques</a>
+                        <a href="#">Jeunesse</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="newsletter" class="section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Restez informé</h2>
+                <p>Inscrivez-vous à notre newsletter pour recevoir les dernières nouveautés et promotions</p>
+                <form id="newsletter-form">
+                    <input type="email" placeholder="Votre adresse email" required>
+                    <button type="submit" class="btn">S'inscrire</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>Livres & Articles</h3>
+                    <p>Votre boutique littéraire en ligne depuis 2010.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                        <li><a href="{{ url_for('livres') if 'livres' in url_for_map else '#' }}">Livres</a></li>
+                        <li><a href="{{ url_for('articles') }}">Articles</a></li>
+                        <li><a href="{{ url_for('blog') }}">Blog</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Rue de la Littérature, Paris</li>
+                        <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
+                        <li><i class="fas fa-envelope"></i> contact@livres-articles.fr</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Livres & Articles. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

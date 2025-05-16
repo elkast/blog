@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Livres & Articles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Livres & Articles">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                    <li><a href="{{ url_for('livres') }}" class="active">Livres</a></li>
+                    <li><a href="{{ url_for('articles') }}">Articles</a></li>
+                    <li><a href="{{ url_for('blog') }}">Blog</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="cart-panel">
+        <div class="cart-header">
+            <h3>Votre Panier</h3>
+            <button class="close-cart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items">
+            <!-- Cart items will be added here dynamically -->
+        </div>
+        <div class="cart-actions">
+            <button class="btn checkout-btn">Procéder au paiement</button>
+            <button class="btn continue-shopping">Continuer vos achats</button>
+        </div>
+    </div>
+    
+    <section class="page-header">
+        <div class="container">
+            <h1>Notre Catalogue de Livres</h1>
+            <p>Découvrez notre sélection de livres pour tous les goûts et tous les âges</p>
+        </div>
+    </section>
+    
+    <section class="section">
+        <div class="container">
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label for="category">Catégorie:</label>
+                    <select id="category">
+                        <option value="all">Tous</option>
+                        <option value="roman">Romans</option>
+                        <option value="sciencefiction">Science Fiction</option>
+                        <option value="biographie">Biographies</option>
+                        <option value="developpement">Développement Personnel</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="price">Prix:</label>
+                    <select id="price">
+                        <option value="all">Tous</option>
+                        <option value="0-15">Moins de 15€</option>
+                        <option value="15-25">15€ - 25€</option>
+                        <option value="25+">Plus de 25€</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <input type="text" placeholder="Rechercher un livre...">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <div class="books-grid">
+                {% if books %}
+                    {% for book in books %}
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename=book.image) }}" alt="{{ book.title }}">
+                        </div>
+                        <div class="item-details">
+                            <h3>{{ book.title }}</h3>
+                            <p class="author">Par {{ book.author }}</p>
+                            <p class="price">{{ book.price }} €</p>
+                            <button class="add-to-cart" data-id="{{ book.id }}">Ajouter au panier</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename='book1.png') }}" alt="Le Temps des Secrets">
+                        </div>
+                        <div class="item-details">
+                            <h3>Le Temps des Secrets</h3>
+                            <p class="author">Par Marie Laurent</p>
+                            <p class="price">19,90 €</p>
+                            <button class="add-to-cart">Ajouter au panier</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename='book2.png') }}" alt="L'Art de la Simplicité">
+                        </div>
+                        <div class="item-details">
+                            <h3>L'Art de la Simplicité</h3>
+                            <p class="author">Par Jean Dupont</p>
+                            <p class="price">22,50 €</p>
+                            <button class="add-to-cart">Ajouter au panier</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename='book3.png') }}" alt="Voyage Intérieur">
+                        </div>
+                        <div class="item-details">
+                            <h3>Voyage Intérieur</h3>
+                            <p class="author">Par Sophie Martin</p>
+                            <p class="price">18,90 €</p>
+                            <button class="add-to-cart">Ajouter au panier</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename='more_books.png') }}" alt="Les Mystères de Paris">
+                        </div>
+                        <div class="item-details">
+                            <h3>Les Mystères de Paris</h3>
+                            <p class="author">Par Alexandre Dumas</p>
+                            <p class="price">24,90 €</p>
+                            <button class="add-to-cart">Ajouter au panier</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename='more_books.png') }}" alt="La Symphonie du Hasard">
+                        </div>
+                        <div class="item-details">
+                            <h3>La Symphonie du Hasard</h3>
+                            <p class="author">Par Amélie Nothomb</p>
+                            <p class="price">21,50 €</p>
+                            <button class="add-to-cart">Ajouter au panier</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename='more_books.png') }}" alt="Le Parfum">
+                        </div>
+                        <div class="item-details">
+                            <h3>Le Parfum</h3>
+                            <p class="author">Par Patrick Süskind</p>
+                            <p class="price">17,90 €</p>
+                            <button class="add-to-cart">Ajouter au panier</button>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="pagination">
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#" class="next">Suivant <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="newsletter" class="section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Restez informé</h2>
+                <p>Inscrivez-vous à notre newsletter pour recevoir les dernières nouveautés et promotions</p>
+                <form id="newsletter-form">
+                    <input type="email" placeholder="Votre adresse email" required>
+                    <button type="submit" class="btn">S'inscrire</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>Livres & Articles</h3>
+                    <p>Votre boutique littéraire en ligne depuis 2010.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                        <li><a href="{{ url_for('livres') }}">Livres</a></li>
+                        <li><a href="{{ url_for('articles') }}">Articles</a></li>
+                        <li><a href="{{ url_for('blog') }}">Blog</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Rue de la Littérature, Paris</li>
+                        <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
+                        <li><i class="fas fa-envelope"></i> contact@livres-articles.fr</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Livres & Articles. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

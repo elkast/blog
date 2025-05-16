@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Votre Boutique Littéraire</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Livres & Articles">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">Accueil</a></li>
+                    <li><a href="{{ url_for('livres') if 'livres' in url_for_map else '#' }}">Livres</a></li>
+                    <li><a href="{{ url_for('articles') }}">Articles</a></li>
+                    <li><a href="{{ url_for('blog') if 'blog' in url_for_map else '#' }}">Blog</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="cart-panel">
+        <div class="cart-header">
+            <h3>Votre Panier</h3>
+            <button class="close-cart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items">
+            <!-- Cart items will be added here dynamically -->
+        </div>
+        <div class="cart-actions">
+            <button class="btn checkout-btn">Procéder au paiement</button>
+            <button class="btn continue-shopping">Continuer vos achats</button>
+        </div>
+    </div>
+    
+    <section id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Découvrez Notre Sélection Littéraire</h1>
+                <p>Des livres et des articles soigneusement choisis pour enrichir votre bibliothèque</p>
+                <a href="{{ url_for('livres') if 'livres' in url_for_map else '#' }}" class="btn">Explorer</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="featured" class="section">
+        <div class="container">
+            <h2 class="section-title">Nos Coups de Cœur</h2>
+            <div class="featured-items">
+                <div class="item">
+                    <div class="item-image">
+                        <img src="{{ url_for('static', filename='book1.png') }}" alt="Livre populaire">
+                    </div>
+                    <div class="item-details">
+                        <h3>Les Secrets de la Savane</h3>
+                        <p class="author">Par Chinua Achebe</p>
+                        <p class="price">13.000 FCFA</p>
+                        <button class="add-to-cart">Ajouter au panier</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-image">
+                        <img src="{{ url_for('static', filename='book2.png') }}" alt="Livre populaire">
+                    </div>
+                    <div class="item-details">
+                        <h3>Les Contes du Baobab</h3>
+                        <p class="author">Par Amadou Hampâté Bâ</p>
+                        <p class="price">15.000 FCFA</p>
+                        <button class="add-to-cart">Ajouter au panier</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="item-image">
+                        <img src="{{ url_for('static', filename='book3.png') }}" alt="Livre populaire">
+                    </div>
+                    <div class="item-details">
+                        <h3>L'Héritage des Ancêtres</h3>
+                        <p class="author">Par Léopold Sédar Senghor</p>
+                        <p class="price">12.500 FCFA</p>
+                        <button class="add-to-cart">Ajouter au panier</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="blog" class="section">
+        <div class="container">
+            <h2 class="section-title">Notre Blog</h2>
+            <div class="blog-posts">
+                {% if articles %}
+                    {% for article in articles[:2] %}
+                    <div class="post">
+                        <div class="post-image">
+                            <img src="{{ url_for('static', filename='blog1.png') }}" alt="Article de blog">
+                        </div>
+                        <div class="post-content">
+                            <h3>{{ article.title }}</h3>
+                            <p class="date">{{ article.date_posted.strftime('%d %B %Y') }}</p>
+                            <p class="excerpt">{{ article.content|truncate(100) }}</p>
+                            <a href="{{ url_for('article', article_id=article.id) }}" class="read-more">Lire la suite</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="post">
+                        <div class="post-image">
+                            <img src="{{ url_for('static', filename='blog1.png') }}" alt="Article de blog">
+                        </div>
+                        <div class="post-content">
+                            <h3>Les tendances littéraires de 2023</h3>
+                            <p class="date">23 juin 2023</p>
+                            <p class="excerpt">Découvrez les genres et les styles qui dominent le monde littéraire cette année...</p>
+                            <a href="#" class="read-more">Lire la suite</a>
+                        </div>
+                    </div>
+                    <div class="post">
+                        <div class="post-image">
+                            <img src="{{ url_for('static', filename='blog2.png') }}" alt="Article de blog">
+                        </div>
+                        <div class="post-content">
+                            <h3>Comment choisir le livre parfait pour l'été</h3>
+                            <p class="date">15 juin 2023</p>
+                            <p class="excerpt">Nos conseils pour trouver la lecture idéale pour vos vacances estivales...</p>
+                            <a href="#" class="read-more">Lire la suite</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="view-all">
+                <a href="{{ url_for('blog') if 'blog' in url_for_map else '#' }}" class="btn">Voir tous les articles</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="newsletter" class="section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Restez informé</h2>
+                <p>Inscrivez-vous à notre newsletter pour recevoir les dernières nouveautés et promotions</p>
+                <form id="newsletter-form">
+                    <input type="email" placeholder="Votre adresse email" required>
+                    <button type="submit" class="btn">S'inscrire</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>Livres "&"" Articles</h3>
+                    <p>Votre boutique littéraire en ligne depuis 2010.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                        <li><a href="{{ url_for('livres') if 'livres' in url_for_map else '#' }}">Livres</a></li>
+                        <li><a href="{{ url_for('articles') }}">Articles</a></li>
+                        <li><a href="{{ url_for('blog') if 'blog' in url_for_map else '#' }}">Blog</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> CI</li>
+                        <li><i class="fas fa-phone"></i> +225 xx xx xx xx xx</li>
+                        <li><i class="fas fa-envelope"></i> contact@livres-articles.fr</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2025 Livres "&" Articles. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Livres & Articles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Livres & Articles">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                    <li><a href="{{ url_for('livres') if 'livres' in url_for_map else '#' }}">Livres</a></li>
+                    <li><a href="{{ url_for('articles') }}" class="active">Articles</a></li>
+                    <li><a href="{{ url_for('blog') if 'blog' in url_for_map else '#' }}">Blog</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Reste du contenu HTML... -->
+    
+    <section class="section">
+        <div class="container">
+            <!-- Filtres... -->
+            
+            <div class="articles-grid">
+                {% if articles %}
+                    {% for article in articles %}
+                    <div class="item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename='more_articles.png') }}" alt="{{ article.title }}">
+                        </div>
+                        <div class="item-details">
+                            <h3>{{ article.title }}</h3>
+                            <p class="description">{{ article.content|truncate(100) }}</p>
+                            <p class="date">Publié le {{ article.date_posted.strftime('%d/%m/%Y') }}</p>
+                            <a href="{{ url_for('article', article_id=article.id) }}" class="btn">Lire l'article</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Aucun article disponible pour le moment.</p>
+                {% endif %}
+            </div>
+            
+            <!-- Pagination... -->
+        </div>
+    </section>
+    
+    <!-- Reste du contenu HTML... -->
+    
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

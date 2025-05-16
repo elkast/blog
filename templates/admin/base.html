@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %} - Livres & Articles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Livres & Articles">
+                <h2>Administration</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></li>
+                    <li><a href="{{ url_for('admin.articles') }}"><i class="fas fa-newspaper"></i> Articles</a></li>
+                    <li><a href="{{ url_for('admin.blog') }}"><i class="fas fa-blog"></i> Blog</a></li>
+                    <li><a href="{{ url_for('admin.livres') }}"><i class="fas fa-book"></i> Livres</a></li>
+                    <li><a href="{{ url_for('admin.users') }}"><i class="fas fa-users"></i> Utilisateurs</a></li>
+                    <li><a href="{{ url_for('admin.settings') }}"><i class="fas fa-cog"></i> Paramètres</a></li>
+                    <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Retour au site</a></li>
+                    <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="content">
+            <header>
+                <div class="user-info">
+                    <span>Connecté en tant que: {{ current_user.username }}</span>
+                </div>
+            </header>
+            <main>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='admin/script.js') }}"></script>
+</body>
+</html>

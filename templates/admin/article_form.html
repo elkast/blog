@@ -1,0 +1,66 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Modifier' if article else 'Ajouter' }} un Article{% endblock %}
+
+{% block content %}
+<div class="admin-section">
+    <div class="section-header">
+        <h1>{{ 'Modifier' if article else 'Ajouter' }} un Article</h1>
+        <a href="{{ url_for('admin.articles') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
+    </div>
+    
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="form-group">
+                <label for="title">Titre</label>
+                <input type="text" id="title" name="title" value="{{ article.title if article else '' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="content">Contenu</label>
+                <textarea id="content" name="content" rows="15" required>{{ article.content if article else '' }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="image">Image (laisser vide pour conserver l'image actuelle)</label>
+                <input type="file" id="image" name="image">
+                {% if article and article.image %}
+                <div class="current-image">
+                    <p>Image actuelle:</p>
+                    <img src="{{ url_for('static', filename=article.image) }}" alt="{{ article.title }}" width="200">
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="is_published">Statut</label>
+                <select id="is_published" name="is_published">
+                    <option value="1" {{ 'selected' if article and article.is_published else '' }}>Publié</option>
+                    <option value="0" {{ 'selected' if article and not article.is_published else '' }}>Brouillon</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">{{ 'Mettre à jour' if article else 'Ajouter' }}</button>
+                <a href="{{ url_for('admin.articles') }}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Intégrer un éditeur WYSIWYG comme TinyMCE
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof tinymce !== 'undefined') {
+            tinymce.init({
+                selector: '#content',
+                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
+                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                height: 500
+            });
+        }
+    });
+</script>
+{% endblock %}
