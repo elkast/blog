@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur 404 - Page non trouvée | Blog Mr Talnan</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <style>
+        :root {
+            --primary: #1a7f64;
+            --bg-light: #f8f9fa;
+            --text: #4a4a68;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .error-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            padding: 3rem 2rem;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        .error-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .error-code {
+            font-family: var(--font-heading);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .error-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .error-text {
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+        .button.is-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .button.is-primary:hover {
+            background-color: #15654f;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .divider::before { margin-right: 1rem; }
+        .divider::after { margin-left: 1rem; }
+    </style>
+</head>
+<body>
+    <main class="error-card">
+        <div class="error-icon">🔍</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">Page non trouvée</h1>
+        <p class="error-text">La page que vous recherchez n'existe pas ou a été déplacée.</p>
+        
+        <div class="buttons is-centered mb-4">
+            <a href="/" class="button is-primary">
+                <span class="icon"><i class="hgi-stroke hgi-home-01"></i></span>
+                <span>Retour à l'accueil</span>
+            </a>
+            <a href="/recherche/" class="button is-light">
+                <span class="icon"><i class="hgi-stroke hgi-search-01"></i></span>
+                <span>Rechercher</span>
+            </a>
+        </div>
+        
+        <div class="divider">Pages populaires</div>
+        
+        <div class="buttons is-centered">
+            <a href="/" class="button is-small is-outlined">Accueil</a>
+            <a href="/articles/" class="button is-small is-outlined">Articles</a>
+            <a href="/livres/" class="button is-small is-outlined">Livres</a>
+            <a href="/contact/" class="button is-small is-outlined">Contact</a>
+        </div>
+    </main>
+</body>
+</html>

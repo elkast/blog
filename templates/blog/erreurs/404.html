@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="error-page">
+    <div class="container text-center">
+        <p class="error-code">404</p>
+        <h1 class="section-title mb-lg">Page non trouvée</h1>
+        <p class="text-secondary mb-lg">
+            Désolé, la page que vous cherchez n'existe pas ou a été déplacée.
+        </p>
+        <div class="flex justify-center gap-md">
+            <a href="{% url 'blog:accueil' %}" class="btn btn-primary">
+                <i class="ti ti-home"></i>
+                Retour à l'accueil
+            </a>
+            <button onclick="history.back()" class="btn btn-secondary">
+                <i class="ti ti-arrow-left"></i>
+                Page précédente
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}

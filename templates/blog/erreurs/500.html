@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="error-page">
+    <div class="container text-center">
+        <p class="error-code">500</p>
+        <h1 class="section-title mb-lg">Erreur serveur</h1>
+        <p class="text-secondary mb-lg">
+            Désolé, une erreur inattendue s'est produite. Notre équipe a été notifiée.
+        </p>
+        <div class="flex justify-center gap-md">
+            <a href="{% url 'blog:accueil' %}" class="btn btn-primary">
+                <i class="ti ti-home"></i>
+                Retour à l'accueil
+            </a>
+            <button onclick="location.reload()" class="btn btn-secondary">
+                <i class="ti ti-refresh"></i>
+                Réessayer
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}

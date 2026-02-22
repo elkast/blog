@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li><a href="{% url 'admin:livres_liste' %}">Livres</a></li>
+<li>Supprimer</li>
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+    <div class="card bg-base-100 shadow-lg">
+        <div class="card-body text-center">
+            <div class="text-6xl mb-4">⚠️</div>
+            <h2 class="card-title justify-center text-error">Confirmer la suppression</h2>
+            <p class="py-4">
+                Êtes-vous sûr de vouloir supprimer le livre<br>
+                "<strong>{{ livre.titre }}</strong>" ?
+            </p>
+            
+            <div class="flex gap-4 items-center bg-base-200 rounded-lg p-4 text-left mb-4">
+                {% if livre.image_couverture %}
+                <img src="{{ livre.image_couverture }}" alt="{{ livre.titre }}" class="w-16 h-20 object-cover rounded">
+                {% else %}
+                <div class="w-16 h-20 bg-success text-white rounded flex items-center justify-center text-2xl">📖</div>
+                {% endif %}
+                <div>
+                    <p class="text-sm"><strong>Auteur :</strong> {{ livre.auteur|default:"Mr Talnan" }}</p>
+                    <p class="text-sm"><strong>Prix :</strong> {% if livre.est_gratuit %}Gratuit{% else %}{{ livre.prix }} {{ livre.devise }}{% endif %}</p>
+                </div>
+            </div>
+            
+            <p class="text-sm text-base-content/60">Cette action est irréversible.</p>
+            
+            <div class="card-actions justify-center mt-6">
+                <form method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-error gap-2">
+                        <i class="ti ti-trash"></i>
+                        Oui, supprimer
+                    </button>
+                </form>
+                <a href="{% url 'admin:livres_liste' %}" class="btn btn-ghost gap-2">
+                    <i class="ti ti-x"></i>
+                    Annuler
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li>Messages</li>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="flex flex-wrap gap-2 mb-6">
+    <a href="{% url 'admin:messages_liste' %}" class="btn {% if not filtre_lu %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-list-view" aria-hidden="true"></i>
+        Tous
+    </a>
+    <a href="?lu=0" class="btn {% if filtre_lu == '0' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-mail-01" aria-hidden="true"></i>
+        Non lus
+    </a>
+    <a href="?lu=1" class="btn {% if filtre_lu == '1' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-mail-open-01" aria-hidden="true"></i>
+        Lus
+    </a>
+</div>
+
+<!-- Messages List -->
+<div class="space-y-4">
+    {% for msg in messages_liste %}
+    <div class="card bg-base-100 shadow-lg {% if not msg.est_lu %}border-l-4 border-primary{% endif %}">
+        <div class="card-body">
+            <div class="flex flex-col sm:flex-row justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="avatar placeholder">
+                        <div class="bg-neutral text-neutral-content rounded-full w-12">
+                            <span class="text-lg">{{ msg.nom|slice:":1"|upper }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-semibold">{{ msg.nom }}</h3>
+                            {% if not msg.est_lu %}
+                            <span class="badge badge-primary badge-sm">Nouveau</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm text-base-content/60">{{ msg.email }}</p>
+                    </div>
+                </div>
+                <div class="text-sm text-base-content/60">
+                    {{ msg.date_creation }}
+                </div>
+            </div>
+            
+            {% if msg.sujet %}
+            <div class="mt-3">
+                <span class="font-medium text-primary flex items-center gap-1">
+                    <i class="hgi-stroke hgi-pin" aria-hidden="true"></i>
+                    {{ msg.sujet }}
+                </span>
+            </div>
+            {% endif %}
+            
+            <p class="mt-2 text-base-content/80">{{ msg.message|truncatewords:50 }}</p>
+            
+            <div class="card-actions justify-end mt-4 pt-4 border-t">
+                {% if not msg.est_lu %}
+                <a href="{% url 'admin:messages_lu' msg.id %}" class="btn btn-primary btn-sm gap-2">
+                    <i class="hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i>
+                    Marquer comme lu
+                </a>
+                {% endif %}
+                <a href="mailto:{{ msg.email }}" class="btn btn-ghost btn-sm gap-2">
+                    <i class="hgi-stroke hgi-mail-01" aria-hidden="true"></i>
+                    Répondre
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="card bg-base-100 shadow-lg">
+        <div class="card-body text-center py-16">
+            <i class="hgi-stroke hgi-message-cancel text-6xl text-base-content/30 mb-4" aria-hidden="true"></i>
+            <h3 class="text-lg font-semibold">Aucun message</h3>
+            <p class="text-base-content/60">Vous n'avez reçu aucun message pour le moment.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

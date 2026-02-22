@@ -1,0 +1,56 @@
+{% comment %} 
+Composant Carte de Contenu - Hugeicons
+Variables requises:
+    - contenu: Dictionnaire avec les données du contenu
+    - afficher_info: Boolean pour afficher les infos sous la carte (default: True)
+{% endcomment %}
+
+{% with afficher_info=afficher_info|default:True %}
+<article class="card bg-base-100 shadow-lg card-hover overflow-hidden border border-base-200">
+    <a href="{% url 'blog:detail_article' contenu.slug %}" class="img-hover-zoom relative">
+        <figure class="aspect-video">
+            {% if contenu.image_url %}
+            <img src="{{ contenu.image_url }}" alt="{{ contenu.titre }}" class="w-full h-full object-cover" loading="lazy">
+            {% elif contenu.image_couverture %}
+            <img src="{{ contenu.image_couverture }}" alt="{{ contenu.titre }}" class="w-full h-full object-cover" loading="lazy">
+            {% else %}
+            <img src="https://picsum.photos/400/250?random={{ contenu.id }}" alt="{{ contenu.titre }}" class="w-full h-full object-cover" loading="lazy">
+            {% endif %}
+        </figure>
+        
+        <!-- Hover overlay -->
+        <div class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span class="btn btn-primary btn-sm gap-1">
+                <i class="hgi-stroke hgi-view" aria-hidden="true"></i>
+                Voir
+            </span>
+        </div>
+        
+        <!-- Badge -->
+        {% if contenu.est_nouveau %}
+        <div class="badge badge-primary badge-top-left shadow">Nouveau</div>
+        {% endif %}
+    </a>
+    
+    {% if afficher_info %}
+    <div class="card-body p-4">
+        <h3 class="card-title text-sm font-heading leading-tight">
+            <a href="{% url 'blog:detail_contenu' contenu.slug %}" 
+               class="hover:text-primary transition line-clamp-2"
+               title="{{ contenu.titre }}">
+                {{ contenu.titre }}
+            </a>
+        </h3>
+        <p class="text-xs opacity-60 line-clamp-1">
+            {% if contenu.categories %}
+            {{ contenu.categories }}
+            {% elif contenu.auteur %}
+            Par {{ contenu.auteur }}
+            {% else %}
+            Article académique
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+</article>
+{% endwith %}

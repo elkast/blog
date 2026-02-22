@@ -1,0 +1,326 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li><a href="{% url 'admin:livres_liste' %}">Livres</a></li>
+<li>{% if mode_edition %}Modifier{% else %}Ajouter{% endif %}</li>
+{% endblock %}
+
+{% block page_header %}
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <h1 class="text-2xl lg:text-3xl font-bold text-primary font-heading">
+        {% if mode_edition %}Modifier le livre{% else %}Nouveau livre{% endif %}
+    </h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Section: Informations du livre -->
+                <div class="border-b pb-4">
+                    <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-book-02" aria-hidden="true"></i>
+                        Informations du livre
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Titre <span class="text-error">*</span></span>
+                            </label>
+                            <input type="text" id="titre" name="titre" 
+                                   value="{{ livre.titre|default:donnees.titre }}" 
+                                   class="input input-bordered {% if erreurs.titre %}input-error{% endif %}" 
+                                   placeholder="Titre du livre" required>
+                            {% if erreurs.titre %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ erreurs.titre }}</span>
+                            </label>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Auteur</span>
+                            </label>
+                            <input type="text" name="auteur" 
+                                   value="{{ livre.auteur|default:donnees.auteur|default:'Mr Talnan' }}" 
+                                   class="input input-bordered" 
+                                   placeholder="Nom de l'auteur">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Slug (URL) <span class="text-error">*</span></span>
+                            </label>
+                            <input type="text" id="slug" name="slug" 
+                                   value="{{ livre.slug|default:donnees.slug }}" 
+                                   class="input input-bordered {% if erreurs.slug %}input-error{% endif %} {% if mode_edition %}bg-base-200{% endif %}" 
+                                   placeholder="mon-livre-academique"
+                                   {% if mode_edition %}readonly{% endif %}>
+                            <label class="label">
+                                <span class="label-text-alt">Identifiant unique pour l'URL</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">ISBN</span>
+                            </label>
+                            <input type="text" name="isbn" 
+                                   value="{{ livre.isbn|default:donnees.isbn }}" 
+                                   class="input input-bordered" 
+                                   placeholder="978-2-123456-78-9">
+                        </div>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium">Description</span>
+                        </label>
+                        <textarea name="description" class="textarea textarea-bordered min-h-40" 
+                                  placeholder="Description détaillée du livre...">{{ livre.description|default:donnees.description }}</textarea>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium">Extrait / Aperçu</span>
+                        </label>
+                        <textarea name="extrait" class="textarea textarea-bordered min-h-32" 
+                                  maxlength="1000"
+                                  placeholder="Premier chapitre ou résumé du contenu...">{{ livre.extrait|default:donnees.extrait }}</textarea>
+                        <label class="label">
+                            <span class="label-text-alt">Aperçu du contenu pour les visiteurs (max 1000 caractères)</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Section: Détails de publication -->
+                <div class="border-b pb-4">
+                    <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-file-01" aria-hidden="true"></i>
+                        Détails de publication
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Éditeur</span>
+                            </label>
+                            <input type="text" name="editeur" 
+                                   value="{{ livre.editeur|default:donnees.editeur }}" 
+                                   class="input input-bordered" 
+                                   placeholder="Nom de l'éditeur">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Année de publication</span>
+                            </label>
+                            <input type="number" name="annee_publication" 
+                                   value="{{ livre.annee_publication|default:donnees.annee_publication }}" 
+                                   class="input input-bordered" 
+                                   min="1900" max="2030" placeholder="2024">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Nombre de pages</span>
+                            </label>
+                            <input type="number" name="nombre_pages" 
+                                   value="{{ livre.nombre_pages|default:donnees.nombre_pages }}" 
+                                   class="input input-bordered" 
+                                   min="1" placeholder="350">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Langue</span>
+                            </label>
+                            <select name="langue" class="select select-bordered w-full">
+                                <option value="Français" {% if livre.langue == 'Français' %}selected{% endif %}>Français</option>
+                                <option value="Anglais" {% if livre.langue == 'Anglais' %}selected{% endif %}>Anglais</option>
+                                <option value="Espagnol" {% if livre.langue == 'Espagnol' %}selected{% endif %}>Espagnol</option>
+                                <option value="Allemand" {% if livre.langue == 'Allemand' %}selected{% endif %}>Allemand</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium">Co-auteurs</span>
+                        </label>
+                        <input type="text" name="co_auteurs" 
+                               value="{{ livre.co_auteurs|default:donnees.co_auteurs }}" 
+                               class="input input-bordered" 
+                               placeholder="Noms séparés par des virgules">
+                    </div>
+                </div>
+                
+                <!-- Section: Tarification -->
+                <div class="border-b pb-4">
+                    <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-coins-01" aria-hidden="true"></i>
+                        Tarification
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Prix</span>
+                            </label>
+                            <input type="number" name="prix" 
+                                   value="{{ livre.prix|default:donnees.prix|default:'0.00' }}" 
+                                   class="input input-bordered" 
+                                   step="0.01" min="0" placeholder="24.90">
+                            <label class="label">
+                                <span class="label-text-alt">Mettre 0.00 pour un livre gratuit</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Devise</span>
+                            </label>
+                            <select name="devise" class="select select-bordered w-full">
+                                <option value="FCFA" {% if livre.devise == 'FCFA' %}selected{% endif %}>FCFA</option>
+                                <option value="EUR" {% if livre.devise == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                                <option value="USD" {% if livre.devise == 'USD' %}selected{% endif %}>USD ($)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section: Médias -->
+                <div class="border-b pb-4">
+                    <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-image-02" aria-hidden="true"></i>
+                        Médias
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">URL de la couverture</span>
+                            </label>
+                            <input type="url" name="image_couverture" 
+                                   value="{{ livre.image_couverture|default:donnees.image_couverture }}" 
+                                   class="input input-bordered" 
+                                   placeholder="https://exemple.com/couverture.jpg">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">URL du fichier PDF</span>
+                            </label>
+                            <input type="url" name="fichier_pdf" 
+                                   value="{{ livre.fichier_pdf|default:donnees.fichier_pdf }}" 
+                                   class="input input-bordered" 
+                                   placeholder="https://exemple.com/livre.pdf">
+                        </div>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium">URL du fichier d'aperçu</span>
+                        </label>
+                        <input type="url" name="fichier_preview" 
+                               value="{{ livre.fichier_preview|default:donnees.fichier_preview }}" 
+                               class="input input-bordered" 
+                               placeholder="https://exemple.com/apercu.pdf">
+                        <label class="label">
+                            <span class="label-text-alt">Aperçu PDF gratuit (premiers chapitres)</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Section: Catégories -->
+                <div class="border-b pb-4">
+                    <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-tags" aria-hidden="true"></i>
+                        Catégories
+                    </h2>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        {% for cat in categories %}
+                        <label class="flex items-center gap-2 p-3 rounded-lg bg-base-200 hover:bg-base-300 cursor-pointer transition-colors">
+                            <input type="checkbox" name="categories" value="{{ cat.id }}" class="checkbox checkbox-success checkbox-sm">
+                            <span>{{ cat.nom }}</span>
+                        </label>
+                        {% empty %}
+                        <p class="text-base-content/60 italic">Aucune catégorie disponible</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Section: Options -->
+                <div class="border-b pb-4">
+                    <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-settings-02" aria-hidden="true"></i>
+                        Options de publication
+                    </h2>
+                    
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_gratuit" class="toggle toggle-success" 
+                                   {% if livre.est_gratuit or donnees.est_gratuit %}checked{% endif %}>
+                            <span>Gratuit</span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_publie" class="toggle toggle-primary" 
+                                   {% if livre.est_publie or donnees.est_publie %}checked{% endif %}>
+                            <span>Publié <span class="text-base-content/60 text-sm">(visible sur le site)</span></span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_vedette" class="toggle toggle-warning" 
+                                   {% if livre.est_vedette or donnees.est_vedette %}checked{% endif %}>
+                            <span>Vedette <span class="text-base-content/60 text-sm">(mis en avant)</span></span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_nouveau" class="toggle toggle-info" 
+                                   {% if livre.est_nouveau or donnees.est_nouveau %}checked{% endif %}>
+                            <span>Nouveau</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex flex-wrap gap-3 pt-2">
+                    <button type="submit" class="btn btn-success gap-2">
+                        <i class="hgi-stroke hgi-floppy-disk" aria-hidden="true"></i>
+                        {% if mode_edition %}Enregistrer les modifications{% else %}Créer le livre{% endif %}
+                    </button>
+                    <a href="{% url 'admin:livres_liste' %}" class="btn btn-ghost gap-2">
+                        <i class="hgi-stroke hgi-cancel-01" aria-hidden="true"></i>
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('titre').addEventListener('input', function() {
+    const slugField = document.getElementById('slug');
+    if (!slugField.readOnly && !slugField.value) {
+        slugField.value = this.value
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+});
+</script>
+{% endblock %}

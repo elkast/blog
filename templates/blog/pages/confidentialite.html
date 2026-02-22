@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section" style="padding-top: 120px;">
+    <div class="container" style="max-width: 800px;">
+        <h1 class="section-title text-center mb-lg" style="font-size: var(--font-size-3xl);">
+            Politique de Confidentialité
+        </h1>
+        
+        <p class="text-muted text-center mb-lg">Dernière mise à jour: {% now "d F Y" %}</p>
+        
+        <div class="text-secondary" style="line-height: 1.8;">
+            <h2 class="section-title mt-lg mb-md">1. Collecte des données</h2>
+            <p class="mb-lg">
+                Movie Love collecte certaines informations lorsque vous utilisez notre service, 
+                notamment les données de navigation et les préférences de contenu. Ces données 
+                nous aident à améliorer votre expérience et à personnaliser nos recommandations.
+            </p>
+            
+            <h2 class="section-title mt-lg mb-md">2. Utilisation des données</h2>
+            <p class="mb-lg">
+                Vos données sont utilisées exclusivement pour:
+            </p>
+            <ul style="list-style: disc; padding-left: var(--spacing-lg);">
+                <li class="mb-md">Améliorer notre service et votre expérience utilisateur</li>
+                <li class="mb-md">Vous proposer des recommandations personnalisées</li>
+                <li class="mb-md">Analyser l'utilisation de notre plateforme</li>
+                <li class="mb-md">Communiquer avec vous concernant notre service</li>
+            </ul>
+            
+            <h2 class="section-title mt-lg mb-md">3. Protection des données</h2>
+            <p class="mb-lg">
+                Nous prenons la sécurité de vos données très au sérieux. Nous utilisons des 
+                mesures de sécurité techniques et organisationnelles pour protéger vos 
+                informations contre tout accès non autorisé.
+            </p>
+            
+            <h2 class="section-title mt-lg mb-md">4. Cookies</h2>
+            <p class="mb-lg">
+                Notre site utilise des cookies pour améliorer votre expérience de navigation. 
+                Vous pouvez configurer votre navigateur pour refuser les cookies, mais cela 
+                pourrait affecter certaines fonctionnalités du site.
+            </p>
+            
+            <h2 class="section-title mt-lg mb-md">5. Vos droits</h2>
+            <p class="mb-lg">
+                Vous avez le droit d'accéder, de rectifier ou de supprimer vos données 
+                personnelles. Pour exercer ces droits, contactez-nous à 
+                <a href="mailto:support@movielove.net" class="text-gold">support@movielove.net</a>.
+            </p>
+            
+            <h2 class="section-title mt-lg mb-md">6. Contact</h2>
+            <p>
+                Pour toute question concernant cette politique de confidentialité, veuillez 
+                nous contacter à <a href="mailto:support@movielove.net" class="text-gold">support@movielove.net</a>.
+            </p>
+        </div>
+        
+        <div class="text-center mt-lg">
+            <a href="{% url 'blog:accueil' %}" class="btn btn-secondary">
+                <i class="ti ti-arrow-left"></i>
+                Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

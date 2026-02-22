@@ -1,0 +1,122 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li>Newsletter</li>
+{% endblock %}
+
+{% block page_actions %}
+<button onclick="exportCSV()" class="btn btn-success gap-2">
+    <i class="hgi-stroke hgi-download-04" aria-hidden="true"></i>
+    Exporter CSV
+</button>
+{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="stat bg-base-100 shadow rounded-box">
+        <div class="stat-figure text-primary">
+            <i class="hgi-stroke hgi-users-02 text-3xl" aria-hidden="true"></i>
+        </div>
+        <div class="stat-title">Total abonnés</div>
+        <div class="stat-value text-primary">{{ abonnes|length }}</div>
+    </div>
+    
+    <div class="stat bg-base-100 shadow rounded-box">
+        <div class="stat-figure text-success">
+            <i class="hgi-stroke hgi-user-check-01 text-3xl" aria-hidden="true"></i>
+        </div>
+        <div class="stat-title">Abonnés actifs</div>
+        <div class="stat-value text-success">{{ abonnes|length }}</div>
+    </div>
+    
+    <div class="stat bg-base-100 shadow rounded-box">
+        <div class="stat-figure text-base-content/40">
+            <i class="hgi-stroke hgi-user-remove-01 text-3xl" aria-hidden="true"></i>
+        </div>
+        <div class="stat-title">Désabonnés</div>
+        <div class="stat-value">0</div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card bg-base-100 shadow-lg">
+    <div class="card-body p-0">
+        <div class="overflow-x-auto">
+            <table class="table" id="newsletter-table">
+                <thead>
+                    <tr class="bg-base-200">
+                        <th>Email</th>
+                        <th>Nom</th>
+                        <th>Date d'inscription</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for abonne in abonnes %}
+                    <tr class="hover">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="avatar placeholder">
+                                    <div class="bg-neutral text-neutral-content rounded-full w-10">
+                                        <span>{{ abonne.email|slice:":1"|upper }}</span>
+                                    </div>
+                                </div>
+                                <span class="font-medium">{{ abonne.email }}</span>
+                            </div>
+                        </td>
+                        <td>{{ abonne.nom|default:"-" }}</td>
+                        <td class="text-sm text-base-content/70">{{ abonne.date_inscription }}</td>
+                        <td>
+                            {% if abonne.est_actif %}
+                            <span class="badge badge-success gap-1">
+                                <i class="hgi-stroke hgi-checkmark-circle-02 text-xs" aria-hidden="true"></i> Actif
+                            </span>
+                            {% else %}
+                            <span class="badge badge-ghost gap-1">Désabonné</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-16">
+                            <div class="flex flex-col items-center gap-4">
+                                <i class="hgi-stroke hgi-mail-remove-01 text-6xl text-base-content/30" aria-hidden="true"></i>
+                                <div>
+                                    <h3 class="text-lg font-semibold">Aucun abonné</h3>
+                                    <p class="text-base-content/60">Aucun abonné à la newsletter pour le moment.</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportCSV() {
+    const table = document.getElementById('newsletter-table');
+    const rows = table.querySelectorAll('tr');
+    let csv = [];
+    
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('th, td');
+        let rowData = [];
+        cols.forEach(col => {
+            rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+        });
+        csv.push(rowData.join(','));
+    });
+    
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'newsletter_abonnes.csv';
+    a.click();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% comment %} Page Contact - Bulma CSS {% endcomment %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-banner" style="min-height: 35vh; padding: 3rem 0;">
+    <div class="container has-text-centered">
+        <h1 class="title is-1 has-text-white mb-3">Contactez-nous</h1>
+        <p class="subtitle is-5 has-text-white-ter">
+            Vous avez une question, une suggestion ou besoin d'aide? Nous sommes là pour vous.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <!-- Contact Cards -->
+                <div class="columns is-multiline mb-6">
+                    <!-- Email -->
+                    <div class="column is-6">
+                        <div class="box">
+                            <div class="is-flex" style="gap: 1rem;">
+                                <div class="icon-wrapper is-green" style="width: 48px; height: 48px; flex-shrink: 0;">
+                                    <i class="hgi-stroke hgi-mail-01"></i>
+                                </div>
+                                <div>
+                                    <h3 class="title is-5 mb-2">Email</h3>
+                                    <a href="mailto:{{ config_site.email_support|default:'contact@blogtalnan.com' }}" class="text-primary">
+                                        {{ config_site.email_support|default:'contact@blogtalnan.com' }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div class="column is-6">
+                        <div class="box">
+                            <div class="is-flex" style="gap: 1rem;">
+                                <div class="icon-wrapper is-blue" style="width: 48px; height: 48px; flex-shrink: 0;">
+                                    <i class="hgi-stroke hgi-phone-call-01"></i>
+                                </div>
+                                <div>
+                                    <h3 class="title is-5 mb-2">Téléphone</h3>
+                                    <p>{{ config_site.telephone|default:'+225 XX XX XX XX XX' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hours -->
+                    <div class="column is-6">
+                        <div class="box">
+                            <div class="is-flex" style="gap: 1rem;">
+                                <div class="icon-wrapper is-orange" style="width: 48px; height: 48px; flex-shrink: 0;">
+                                    <i class="hgi-stroke hgi-clock-01"></i>
+                                </div>
+                                <div>
+                                    <h3 class="title is-5 mb-2">Heures d'ouverture</h3>
+                                    <p class="is-size-7 text-muted">Lundi - Vendredi: 9h - 18h</p>
+                                    <p class="is-size-7 text-muted">Samedi: 10h - 14h</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location -->
+                    <div class="column is-6">
+                        <div class="box">
+                            <div class="is-flex" style="gap: 1rem;">
+                                <div class="icon-wrapper is-purple" style="width: 48px; height: 48px; flex-shrink: 0;">
+                                    <i class="hgi-stroke hgi-location-01"></i>
+                                </div>
+                                <div>
+                                    <h3 class="title is-5 mb-2">Adresse</h3>
+                                    <p class="is-size-7 text-muted">{{ config_site.universite|default:'Université' }}</p>
+                                    <p class="is-size-7 text-muted">{{ config_site.adresse|default:'Afrique de l\'Ouest' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Social Links -->
+                <div class="box bg-dark has-text-centered mb-6" style="background-color: var(--bg-dark); color: white;">
+                    <h3 class="title is-4 has-text-white mb-4">
+                        <i class="hgi-stroke hgi-share-08 mr-2 text-secondary"></i>
+                        Réseaux sociaux
+                    </h3>
+                    <div class="buttons is-centered">
+                        {% for reseau in reseaux_sociaux %}
+                        <a href="{{ reseau.url }}" target="_blank" rel="noopener" class="button is-rounded is-dark" title="{{ reseau.nom }}">
+                            <span class="icon"><i class="hgi-stroke {{ reseau.icone }}"></i></span>
+                        </a>
+                        {% empty %}
+                        <a href="#" class="button is-rounded is-dark" title="Facebook">
+                            <span class="icon"><i class="hgi-stroke hgi-facebook-02"></i></span>
+                        </a>
+                        <a href="#" class="button is-rounded is-dark" title="LinkedIn">
+                            <span class="icon"><i class="hgi-stroke hgi-linkedin-02"></i></span>
+                        </a>
+                        <a href="#" class="button is-rounded is-dark" title="Twitter">
+                            <span class="icon"><i class="hgi-stroke hgi-new-twitter"></i></span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="box">
+                    <h3 class="title is-4 text-primary mb-5">
+                        <i class="hgi-stroke hgi-sent mr-2"></i>
+                        Envoyer un message
+                    </h3>
+                    
+                    <form method="post" action="{% url 'blog:contact' %}">
+                        {% csrf_token %}
+                        
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Nom complet *</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="text" name="nom" required placeholder="Votre nom">
+                                        <span class="icon is-left"><i class="hgi-stroke hgi-user"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Email *</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="email" name="email" required placeholder="votre@email.com">
+                                        <span class="icon is-left"><i class="hgi-stroke hgi-mail-01"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label">Sujet</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" name="sujet" placeholder="Sujet de votre message">
+                                <span class="icon is-left"><i class="hgi-stroke hgi-text"></i></span>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label">Message *</label>
+                            <div class="control">
+                                <textarea class="textarea" name="message" required placeholder="Votre message..." rows="5"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <button type="submit" class="button is-primary is-fullwidth">
+                                <span class="icon"><i class="hgi-stroke hgi-sent"></i></span>
+                                <span>Envoyer le message</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Back Link -->
+                <div class="has-text-centered mt-5">
+                    <a href="{% url 'blog:accueil' %}" class="button is-ghost">
+                        <span class="icon"><i class="hgi-stroke hgi-arrow-left-01"></i></span>
+                        <span>Retour à l'accueil</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

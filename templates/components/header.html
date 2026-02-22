@@ -1,0 +1,77 @@
+{% comment %} 
+Header Component - Bulma Navbar
+Blog Académique Mr Talnan
+{% endcomment %}
+
+<nav class="navbar is-fixed-top is-white" role="navigation" aria-label="Navigation principale">
+    <div class="container">
+        <!-- Brand -->
+        <div class="navbar-brand">
+            <a class="navbar-item" href="{% url 'blog:accueil' %}">
+                <span style="margin-right: 0.5rem;">📚</span>
+                <span>Blog Mr Talnan</span>
+            </a>
+            
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        
+        <!-- Menu -->
+        <div id="mainNavbar" class="navbar-menu">
+            <div class="navbar-center" style="flex-grow: 1; justify-content: center; display: flex;">
+                <a href="{% url 'blog:accueil' %}" 
+                   class="navbar-item {% if request.resolver_match.url_name == 'accueil' %}is-active{% endif %}">
+                    Accueil
+                </a>
+                
+                <a href="{% url 'blog:liste_articles' %}"
+                   class="navbar-item {% if request.resolver_match.url_name == 'liste_articles' %}is-active{% endif %}">
+                    Articles
+                </a>
+
+                <a href="{% url 'blog:liste_publications' %}"
+                   class="navbar-item {% if request.resolver_match.url_name == 'liste_publications' %}is-active{% endif %}">
+                    Publications
+                </a>
+
+                <a href="{% url 'blog:liste_recherches' %}"
+                   class="navbar-item {% if request.resolver_match.url_name == 'liste_recherches' %}is-active{% endif %}">
+                    Recherches
+                </a>
+                
+                <a href="{% url 'blog:liste_livres' %}" 
+                   class="navbar-item {% if 'livre' in request.resolver_match.url_name %}is-active{% endif %}">
+                    Livres
+                </a>
+                
+                <a href="{% url 'blog:a_propos' %}" 
+                   class="navbar-item {% if request.resolver_match.url_name == 'a_propos' %}is-active{% endif %}">
+                    À propos
+                </a>
+                
+                <a href="{% url 'blog:contact' %}" 
+                   class="navbar-item {% if request.resolver_match.url_name == 'contact' %}is-active{% endif %}">
+                    Contact
+                </a>
+            </div>
+            
+            <!-- Right side -->
+            <div class="navbar-end">
+                <!-- Admin -->
+                <div class="navbar-item">
+                    <a href="{% url 'admin:index' %}" class="button is-primary is-rounded" title="Administration">
+                        <span class="icon"><i class="hgi-stroke hgi-user-circle"></i></span>
+                        <span>Admin</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Spacer for fixed navbar -->
+<div style="height: 52px;"></div>

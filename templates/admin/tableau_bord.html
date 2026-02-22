@@ -1,0 +1,344 @@
+{% extends "admin/base_site.html" %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<!-- Welcome Banner -->
+<section class="card bg-gradient-primary text-white shadow-xl mb-6">
+    <div class="card-body py-6 lg:py-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl lg:text-3xl font-bold flex items-center gap-3">
+                    <span aria-hidden="true">👋</span>
+                    Bienvenue, Mr Talnan
+                </h1>
+                <p class="opacity-90 mt-2 text-base lg:text-lg">
+                    Gérez votre blog académique depuis ce tableau de bord
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="/" target="_blank" class="btn btn-outline btn-sm text-white border-white/50 hover:bg-white hover:text-primary gap-2">
+                    <i class="hgi-stroke hgi-link-square-01" aria-hidden="true"></i>
+                    Voir le site
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions -->
+<section aria-label="Actions rapides" class="mb-6">
+    <h2 class="sr-only">Actions rapides</h2>
+    <div class="flex flex-wrap gap-3">
+        <a href="{% url 'admin:contenus_ajouter' %}" class="btn btn-primary gap-2 shadow-md hover:shadow-lg transition-shadow">
+            <i class="hgi-stroke hgi-add-01" aria-hidden="true"></i>
+            Nouvel article
+        </a>
+        <a href="{% url 'admin:livres_ajouter' %}" class="btn btn-success gap-2 shadow-md hover:shadow-lg transition-shadow">
+            <i class="hgi-stroke hgi-book-02" aria-hidden="true"></i>
+            Nouveau livre
+        </a>
+        <a href="{% url 'admin:messages_liste' %}" class="btn btn-outline gap-2">
+            <i class="hgi-stroke hgi-message-01" aria-hidden="true"></i>
+            Messages
+            {% if messages_non_lus %}
+            <span class="badge badge-primary badge-sm">{{ messages_non_lus }}</span>
+            {% endif %}
+        </a>
+    </div>
+</section>
+
+<!-- Statistics Grid -->
+<section aria-label="Statistiques" class="mb-6">
+    <h2 class="sr-only">Statistiques du blog</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Articles Stat -->
+        <div class="stat stat-gradient-blue text-white rounded-box shadow-lg p-5">
+            <div class="stat-figure opacity-80">
+                <i class="hgi-stroke hgi-note-edit text-4xl" aria-hidden="true"></i>
+            </div>
+            <div class="stat-title text-black text-sm font-medium">Articles</div>
+            <div class="stat-value text-black text-3xl">{{ stats.total_articles|default:"0" }}</div>
+            <div class="stat-desc text-black">publiés sur le blog</div>
+        </div>
+        
+        <!-- Books Stat -->
+        <div class="stat stat-gradient-green text-white rounded-box shadow-lg p-5">
+            <div class="stat-figure opacity-80">
+                <i class="hgi-stroke hgi-book-02 text-4xl" aria-hidden="true"></i>
+            </div>
+            <div class="stat-title text-black text-sm font-medium">Livres</div>
+            <div class="stat-value text-black text-3xl">{{ stats.total_livres|default:"0" }}</div>
+            <div class="stat-desc text-black">disponibles</div>
+        </div>
+        
+        <!-- Categories Stat -->
+        <div class="stat stat-gradient-purple text-white rounded-box shadow-lg p-5">
+            <div class="stat-figure opacity-80">
+                <i class="hgi-stroke hgi-tags text-4xl" aria-hidden="true"></i>
+            </div>
+            <div class="stat-title text-black text-sm font-medium">Catégories</div>
+            <div class="stat-value text-black text-3xl">{{ stats.total_categories|default:"0" }}</div>
+            <div class="stat-desc text-black">actives</div>
+        </div>
+        
+        <!-- Views Stat -->
+        <div class="stat stat-gradient-orange text-white rounded-box shadow-lg p-5">
+            <div class="stat-figure opacity-80">
+                <i class="hgi-stroke hgi-view text-4xl" aria-hidden="true"></i>
+            </div>
+            <div class="stat-title text-black text-sm font-medium">Vues</div>
+            <div class="stat-value text-black text-3xl">{{ stats.total_vues|default:"0" }}</div>
+            <div class="stat-desc text-black">totales</div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+    
+    <!-- Recent Articles -->
+    <section class="card bg-base-100 shadow-lg" aria-labelledby="recent-articles-title">
+        <div class="card-body">
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="recent-articles-title" class="card-title text-lg gap-2">
+                    <i class="hgi-stroke hgi-note-edit text-primary" aria-hidden="true"></i>
+                    Derniers articles
+                </h2>
+                <a href="{% url 'admin:contenus_liste' %}" class="btn btn-ghost btn-sm gap-1">
+                    Voir tout
+                    <i class="hgi-stroke hgi-arrow-right-01" aria-hidden="true"></i>
+                </a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="table table-sm">
+                    <thead>
+                        <tr class="border-b-2">
+                            <th scope="col">Titre</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Statut</th>
+                            <th scope="col" class="w-12"><span class="sr-only">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for article in derniers_contenus %}
+                        <tr class="hover:bg-base-200/50">
+                            <td>
+                                <div class="font-medium text-sm">{{ article.titre|truncatechars:35 }}</div>
+                                {% if article.est_vedette %}
+                                <span class="badge badge-warning badge-xs gap-1 mt-1">
+                                    <i class="hgi-stroke hgi-star text-xs" aria-hidden="true"></i> Vedette
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if article.type_article == 'publication' %}
+                                <span class="badge badge-secondary badge-sm">Publication</span>
+                                {% elif article.type_article == 'recherche' %}
+                                <span class="badge badge-accent badge-sm">Recherche</span>
+                                {% elif article.type_article == 'actualite' %}
+                                <span class="badge badge-info badge-sm">Actualité</span>
+                                {% else %}
+                                <span class="badge badge-primary badge-sm">Article</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if article.est_publie %}
+                                <span class="badge badge-success badge-sm gap-1">
+                                    <i class="hgi-stroke hgi-checkmark-circle-02 text-xs" aria-hidden="true"></i> Publié
+                                </span>
+                                {% else %}
+                                <span class="badge badge-ghost badge-sm">Brouillon</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'admin:contenus_modifier' article.id %}" 
+                                   class="btn btn-ghost btn-xs btn-square"
+                                   aria-label="Modifier {{ article.titre|truncatechars:20 }}">
+                                    <i class="hgi-stroke hgi-edit-02" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-8">
+                                <div class="flex flex-col items-center gap-3 text-base-content/60">
+                                    <i class="hgi-stroke hgi-note-remove text-4xl" aria-hidden="true"></i>
+                                    <p>Aucun article</p>
+                                    <a href="{% url 'admin:contenus_ajouter' %}" class="btn btn-primary btn-sm">
+                                        Créer le premier
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Recent Books -->
+    <section class="card bg-base-100 shadow-lg" aria-labelledby="recent-books-title">
+        <div class="card-body">
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="recent-books-title" class="card-title text-lg gap-2">
+                    <i class="hgi-stroke hgi-book-02 text-primary" aria-hidden="true"></i>
+                    Derniers livres
+                </h2>
+                <a href="{% url 'admin:livres_liste' %}" class="btn btn-ghost btn-sm gap-1">
+                    Voir tout
+                    <i class="hgi-stroke hgi-arrow-right-01" aria-hidden="true"></i>
+                </a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="table table-sm">
+                    <thead>
+                        <tr class="border-b-2">
+                            <th scope="col">Titre</th>
+                            <th scope="col">Prix</th>
+                            <th scope="col">Téléch.</th>
+                            <th scope="col" class="w-12"><span class="sr-only">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for livre in derniers_livres %}
+                        <tr class="hover:bg-base-200/50">
+                            <td>
+                                <div class="font-medium text-sm">{{ livre.titre|truncatechars:30 }}</div>
+                                <div class="flex gap-1 mt-1">
+                                    {% if livre.est_vedette %}
+                                    <span class="badge badge-warning badge-xs">Vedette</span>
+                                    {% endif %}
+                                    {% if livre.est_nouveau %}
+                                    <span class="badge badge-info badge-xs">Nouveau</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if livre.est_gratuit %}
+                                <span class="badge badge-success badge-sm">Gratuit</span>
+                                {% else %}
+                                <span class="font-semibold text-sm">{{ livre.prix }} {{ livre.devise }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="flex items-center gap-1 text-sm">
+                                    <i class="hgi-stroke hgi-download-04 text-sm" aria-hidden="true"></i>
+                                    {{ livre.nombre_telechargements|default:"0" }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'admin:livres_modifier' livre.id %}" 
+                                   class="btn btn-ghost btn-xs btn-square"
+                                   aria-label="Modifier {{ livre.titre|truncatechars:20 }}">
+                                    <i class="hgi-stroke hgi-edit-02" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-8">
+                                <div class="flex flex-col items-center gap-3 text-base-content/60">
+                                    <i class="hgi-stroke hgi-book-open text-4xl" aria-hidden="true"></i>
+                                    <p>Aucun livre</p>
+                                    <a href="{% url 'admin:livres_ajouter' %}" class="btn btn-success btn-sm">
+                                        Créer le premier
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Recent Messages -->
+<section class="card bg-base-100 shadow-lg mt-6" aria-labelledby="recent-messages-title">
+    <div class="card-body">
+        <div class="flex items-center justify-between mb-4">
+            <h2 id="recent-messages-title" class="card-title text-lg gap-2">
+                <i class="hgi-stroke hgi-message-01 text-primary" aria-hidden="true"></i>
+                Messages récents
+                {% if messages_non_lus %}
+                <span class="badge badge-primary badge-sm">{{ messages_non_lus }} non lus</span>
+                {% endif %}
+            </h2>
+            <a href="{% url 'admin:messages_liste' %}" class="btn btn-ghost btn-sm gap-1">
+                Voir tout
+                <i class="hgi-stroke hgi-arrow-right-01" aria-hidden="true"></i>
+            </a>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="table">
+                <thead>
+                    <tr class="border-b-2">
+                        <th scope="col">Expéditeur</th>
+                        <th scope="col">Sujet</th>
+                        <th scope="col" class="hidden md:table-cell">Date</th>
+                        <th scope="col">Statut</th>
+                        <th scope="col" class="w-12"><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in messages_recents %}
+                    <tr class="hover:bg-base-200/50 {% if not msg.est_lu %}bg-primary/5{% endif %}">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="avatar placeholder">
+                                    <div class="bg-neutral text-neutral-content rounded-full w-10">
+                                        <span class="text-sm font-medium">{{ msg.nom|slice:":1"|upper }}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="font-medium">{{ msg.nom }}</div>
+                                    <div class="text-sm text-base-content/60">{{ msg.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="max-w-xs">
+                            <span class="line-clamp-1">{{ msg.sujet|default:"Sans sujet"|truncatechars:40 }}</span>
+                        </td>
+                        <td class="hidden md:table-cell text-sm text-base-content/70">
+                            {{ msg.date_creation }}
+                        </td>
+                        <td>
+                            {% if msg.est_lu %}
+                            <span class="badge badge-ghost badge-sm">Lu</span>
+                            {% else %}
+                            <span class="badge badge-primary badge-sm">Nouveau</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not msg.est_lu %}
+                            <a href="{% url 'admin:messages_lu' msg.id %}" 
+                               class="btn btn-ghost btn-xs btn-square"
+                               aria-label="Marquer comme lu">
+                                <i class="hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-8">
+                            <div class="flex flex-col items-center gap-3 text-base-content/60">
+                                <i class="hgi-stroke hgi-message-cancel text-4xl" aria-hidden="true"></i>
+                                <p>Aucun message reçu</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

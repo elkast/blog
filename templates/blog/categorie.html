@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% comment %} Page de catégorie - daisyUI {% endcomment %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="hero bg-gradient-primary min-h-[35vh] py-16">
+    <div class="hero-content text-center text-neutral-content">
+        <div class="max-w-2xl">
+            <h1 class="text-4xl md:text-5xl font-heading font-bold mb-4">{{ categorie.nom }}</h1>
+            {% if categorie.description %}
+            <p class="text-lg opacity-90 mb-4">{{ categorie.description }}</p>
+            {% endif %}
+            <p class="opacity-70">{{ contenus.paginator.count }} résultat{{ contenus.paginator.count|pluralize }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Content Grid -->
+<section class="py-12 bg-base-100">
+    <div class="container mx-auto px-4">
+        {% if contenus %}
+        <div class="content-grid-4">
+            {% for contenu in contenus %}
+            {% include 'components/carte_contenu.html' with contenu=contenu %}
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if contenus.has_other_pages %}
+        <div class="flex justify-center mt-12">
+            <div class="join">
+                {% if contenus.has_previous %}
+                <a href="?page={{ contenus.previous_page_number }}" class="join-item btn btn-outline gap-1">
+                    <i class="ti ti-chevron-left"></i>
+                    Précédent
+                </a>
+                {% endif %}
+                
+                <button class="join-item btn btn-disabled">
+                    Page {{ contenus.number }} sur {{ contenus.paginator.num_pages }}
+                </button>
+                
+                {% if contenus.has_next %}
+                <a href="?page={{ contenus.next_page_number }}" class="join-item btn btn-outline gap-1">
+                    Suivant
+                    <i class="ti ti-chevron-right"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state py-16">
+            <i class="ti ti-category-off text-6xl opacity-30"></i>
+            <h3 class="text-xl font-heading font-bold mt-4">Aucun contenu</h3>
+            <p class="text-sm opacity-70 mt-2">Aucun contenu dans cette catégorie pour le moment.</p>
+            <a href="{% url 'blog:accueil' %}" class="btn btn-primary mt-6 gap-1">
+                <i class="ti ti-home"></i>
+                Retour à l'accueil
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

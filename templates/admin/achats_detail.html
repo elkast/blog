@@ -1,0 +1,167 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li><a href="{% url 'admin:achats_liste' %}">Achats</a></li>
+<li>Détails #{{ achat.id }}</li>
+{% endblock %}
+
+{% block page_header %}
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div class="flex items-center gap-4">
+        <h1 class="text-2xl font-bold text-admin-primary">Achat #{{ achat.id }}</h1>
+        {% if achat.statut == 'paye' %}
+        <span class="badge badge-success badge-lg gap-1">
+            <i class="ti ti-check"></i> Payé
+        </span>
+        {% elif achat.statut == 'en_attente' %}
+        <span class="badge badge-warning badge-lg gap-1">
+            <i class="ti ti-clock"></i> En attente
+        </span>
+        {% elif achat.statut == 'echoue' %}
+        <span class="badge badge-error badge-lg gap-1">
+            <i class="ti ti-x"></i> Échoué
+        </span>
+        {% else %}
+        <span class="badge badge-info badge-lg gap-1">
+            <i class="ti ti-refresh"></i> Remboursé
+        </span>
+        {% endif %}
+    </div>
+    <a href="{% url 'admin:achats_liste' %}" class="btn btn-ghost gap-2">
+        <i class="ti ti-arrow-left"></i>
+        Retour
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Client Info -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-admin-primary gap-2">
+                    <i class="ti ti-user"></i>
+                    Client
+                </h2>
+                <div class="space-y-3 mt-4">
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Nom</p>
+                        <p class="font-medium">{{ achat.nom_client }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Email</p>
+                        <p class="font-medium">{{ achat.email_client }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Téléphone</p>
+                        <p class="font-medium">{{ achat.telephone_client|default:"Non renseigné" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Book Info -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-admin-primary gap-2">
+                    <i class="ti ti-book"></i>
+                    Livre
+                </h2>
+                <div class="space-y-3 mt-4">
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Titre</p>
+                        <p class="font-medium">{{ achat.livre_titre|default:"Livre supprimé" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Prix</p>
+                        <p class="font-medium text-lg">{{ achat.montant }} {{ achat.devise }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Info -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-admin-primary gap-2">
+                    <i class="ti ti-credit-card"></i>
+                    Paiement
+                </h2>
+                <div class="space-y-3 mt-4">
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Date d'achat</p>
+                        <p class="font-medium">{{ achat.date_achat }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Référence</p>
+                        <p class="font-medium font-mono text-sm">{{ achat.reference_transaction|default:"Non disponible" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Méthode</p>
+                        <p class="font-medium">{{ achat.methode_paiement|default:"Non spécifiée" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Download Info -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-admin-primary gap-2">
+                    <i class="ti ti-download"></i>
+                    Téléchargements
+                </h2>
+                <div class="space-y-3 mt-4">
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Effectués</p>
+                        <p class="font-medium">{{ achat.nombre_telechargements }} / {{ achat.max_telechargements }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Expiration</p>
+                        <p class="font-medium">{{ achat.expire_le|default:"Non définie" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-base-content/60 uppercase tracking-wider">Token</p>
+                        <p class="font-mono text-xs break-all">{{ achat.token_telechargement|default:"Non généré" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actions -->
+    <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+            <h2 class="card-title text-admin-primary gap-2 mb-4">
+                <i class="ti ti-settings"></i>
+                Actions
+            </h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="flex flex-wrap gap-3">
+                    {% if achat.statut == 'en_attente' %}
+                    <button type="submit" name="statut" value="paye" class="btn btn-success gap-2">
+                        <i class="ti ti-check"></i>
+                        Marquer comme payé
+                    </button>
+                    <button type="submit" name="statut" value="echoue" class="btn btn-error gap-2">
+                        <i class="ti ti-x"></i>
+                        Marquer comme échoué
+                    </button>
+                    {% elif achat.statut == 'paye' %}
+                    <button type="submit" name="statut" value="rembourse" class="btn btn-warning gap-2">
+                        <i class="ti ti-refresh"></i>
+                        Rembourser
+                    </button>
+                    {% endif %}
+                    <a href="{% url 'admin:achats_liste' %}" class="btn btn-ghost gap-2">
+                        <i class="ti ti-arrow-left"></i>
+                        Retour à la liste
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

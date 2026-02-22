@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="talnan">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ title|default:"Administration" }}{% endblock %} | Admin Blog</title>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Hugeicons -->
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css">
+    
+    <!-- Tailwind CSS + daisyUI v5 via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/daisyui.css" rel="stylesheet" type="text/css">
+    
+    <!-- Custom Styles -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-base-200 min-h-screen">
+    
+    <!-- Skip Link -->
+    <a href="#admin-content" class="skip-link">Aller au contenu principal</a>
+    
+    <div class="drawer lg:drawer-open">
+        <input id="admin-drawer" type="checkbox" class="drawer-toggle" aria-label="Toggle navigation">
+        
+        <!-- Main Content Area -->
+        <div class="drawer-content flex flex-col">
+            
+            <!-- Mobile Top Navbar -->
+            <header class="navbar bg-base-100 shadow-md lg:hidden sticky top-0 z-40">
+                <div class="flex-none">
+                    <label for="admin-drawer" class="btn btn-square btn-ghost" aria-label="Ouvrir le menu">
+                        <i class="hgi-stroke hgi-menu-02 text-xl" aria-hidden="true"></i>
+                    </label>
+                </div>
+                <div class="flex-1">
+                    <span class="text-lg font-bold text-primary flex items-center gap-2">
+                        <span aria-hidden="true">📚</span>
+                        Blog Admin
+                    </span>
+                </div>
+                <div class="flex-none gap-2">
+                    <a href="/" target="_blank" class="btn btn-ghost btn-sm gap-1" aria-label="Voir le site">
+                        <i class="hgi-stroke hgi-link-square-01" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <main id="admin-content" class="flex-1 p-4 lg:p-6" tabindex="-1">
+                
+                <!-- Breadcrumb -->
+                <nav aria-label="Fil d'Ariane" class="breadcrumbs text-sm mb-4">
+                    <ul>
+                        <li>
+                            <a href="{% url 'admin:index' %}" class="gap-1">
+                                <i class="hgi-stroke hgi-home-01" aria-hidden="true"></i>
+                                <span>Accueil</span>
+                            </a>
+                        </li>
+                        {% block breadcrumb %}{% endblock %}
+                    </ul>
+                </nav>
+                
+                <!-- Flash Messages -->
+                {% if messages %}
+                <div class="space-y-2 mb-4" role="region" aria-label="Notifications">
+                    {% for message in messages %}
+                    <div role="alert" aria-live="polite" class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} shadow-lg">
+                        <i class="hgi-stroke {% if message.tags == 'success' %}hgi-checkmark-circle-02{% elif message.tags == 'error' %}hgi-alert-circle{% elif message.tags == 'warning' %}hgi-alert-02{% else %}hgi-information-circle{% endif %} text-xl" aria-hidden="true"></i>
+                        <span>{{ message }}</span>
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="this.closest('.alert').remove()" aria-label="Fermer">
+                            <i class="hgi-stroke hgi-cancel-01" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Page Header -->
+                {% block page_header %}
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <h1 class="text-2xl lg:text-3xl font-bold text-primary font-heading">
+                        {{ title|default:"Administration" }}
+                    </h1>
+                    <div class="flex flex-wrap gap-2">
+                        {% block page_actions %}{% endblock %}
+                    </div>
+                </div>
+                {% endblock %}
+                
+                <!-- Main Content -->
+                {% block content %}{% endblock %}
+            </main>
+            
+            <!-- Footer -->
+            <footer class="footer footer-center p-4 bg-base-100 text-base-content border-t">
+                <div class="flex flex-col sm:flex-row items-center gap-2 text-sm opacity-70">
+                    <p>© 2026 Blog Académique Mr Talnan</p>
+                    <span class="hidden sm:inline">•</span>
+                    <p>Interface d'administration</p>
+                </div>
+            </footer>
+        </div>
+        
+        <!-- Sidebar Navigation -->
+        <aside class="drawer-side z-50">
+            <label for="admin-drawer" aria-label="Fermer le menu" class="drawer-overlay"></label>
+            <nav class="bg-base-100 w-72 min-h-full shadow-xl flex flex-col" aria-label="Navigation principale">
+                
+                <!-- Logo Header -->
+                <div class="p-4 border-b">
+                    <a href="{% url 'admin:index' %}" class="flex items-center gap-3 group">
+                        <div class="w-11 h-11 rounded-lg stat-gradient-blue flex items-center justify-center text-white text-xl shadow-md group-hover:shadow-lg transition-shadow">
+                            <span aria-hidden="true">📚</span>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-primary text-lg">Blog Académique</h2>
+                            <p class="text-xs text-base-content/60">Administration</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <div class="flex-1 p-4 overflow-y-auto custom-scrollbar">
+                    <ul class="menu menu-lg gap-1">
+                        
+                        <!-- Dashboard -->
+                        <li>
+                            <a href="{% url 'admin:index' %}" class="sidebar-link {% if request.resolver_match.url_name == 'index' %}active{% endif %} gap-3">
+                                <i class="hgi-stroke hgi-dashboard-browsing text-lg" aria-hidden="true"></i>
+                                Tableau de bord
+                            </a>
+                        </li>
+                        
+                        <!-- Content Section -->
+                        <li class="menu-title mt-4">
+                            <span class="text-xs uppercase tracking-wider opacity-60 font-semibold">Contenu</span>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'admin:contenus_liste' %}" class="sidebar-link {% if 'contenus' in request.resolver_match.url_name %}active{% endif %} gap-3">
+                                <i class="hgi-stroke hgi-note-edit text-lg" aria-hidden="true"></i>
+                                Articles
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'admin:livres_liste' %}" class="sidebar-link {% if 'livres' in request.resolver_match.url_name %}active{% endif %} gap-3">
+                                <i class="hgi-stroke hgi-book-02 text-lg" aria-hidden="true"></i>
+                                Livres
+                            </a>
+                        </li>
+                        
+                        <!-- Commerce Section -->
+                        <li class="menu-title mt-4">
+                            <span class="text-xs uppercase tracking-wider opacity-60 font-semibold">Commerce</span>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'admin:achats_liste' %}" class="sidebar-link {% if 'achats' in request.resolver_match.url_name %}active{% endif %} gap-3">
+                                <i class="hgi-stroke hgi-shopping-cart-01 text-lg" aria-hidden="true"></i>
+                                Achats
+                            </a>
+                        </li>
+                        
+                        <!-- Communication Section -->
+                        <li class="menu-title mt-4">
+                            <span class="text-xs uppercase tracking-wider opacity-60 font-semibold">Communication</span>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'admin:messages_liste' %}" class="sidebar-link {% if 'messages' in request.resolver_match.url_name %}active{% endif %} gap-3">
+                                <i class="hgi-stroke hgi-message-01 text-lg" aria-hidden="true"></i>
+                                Messages
+                                {% if messages_non_lus %}
+                                <span class="badge badge-primary badge-sm">{{ messages_non_lus }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'admin:newsletter_liste' %}" class="sidebar-link {% if 'newsletter' in request.resolver_match.url_name %}active{% endif %} gap-3">
+                                <i class="hgi-stroke hgi-mail-01 text-lg" aria-hidden="true"></i>
+                                Newsletter
+                            </a>
+                        </li>
+                        
+                        <!-- System Section -->
+                        <li class="menu-title mt-4">
+                            <span class="text-xs uppercase tracking-wider opacity-60 font-semibold">Système</span>
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'admin:configuration' %}" class="sidebar-link {% if 'configuration' in request.resolver_match.url_name %}active{% endif %} gap-3">
+                                <i class="hgi-stroke hgi-settings-02 text-lg" aria-hidden="true"></i>
+                                Configuration
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- User Footer -->
+                <div class="p-4 border-t bg-base-200/50">
+                    <div class="flex items-center gap-3">
+                        <div class="avatar placeholder">
+                            <div class="bg-primary text-primary-content rounded-full w-10">
+                                <span class="text-lg" aria-hidden="true">👨‍🏫</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-sm truncate">{{ user.username|default:"Administrateur" }}</p>
+                            <p class="text-xs text-base-content/60">Administrateur</p>
+                        </div>
+                        <a href="/" target="_blank" class="btn btn-ghost btn-sm btn-square" title="Voir le site" aria-label="Voir le site">
+                            <i class="hgi-stroke hgi-link-square-01" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        // Auto-dismiss alerts
+        document.querySelectorAll('.alert[role="alert"]').forEach(function(alert) {
+            setTimeout(function() {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.3s ease';
+                setTimeout(function() { alert.remove(); }, 300);
+            }, 5000);
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% comment %} 
+Page d'accueil du Blog Académique Mr Talnan
+Design inspiré d'un portail professionnel moderne - Bulma CSS
+{% endcomment %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="columns is-vcentered">
+            <!-- Left Content -->
+            <div class="column is-6">
+                <h1 class="hero-title">
+                    Partagez le Savoir,<br>
+                    <span class="text-primary">Découvrez l'Excellence</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Articles académiques. Publications. Livres numériques.<br>
+                    Depuis l'Afrique vers le monde entier.
+                </p>
+                
+                <!-- Search Box -->
+                <div class="search-box mb-4">
+                    <form action="{% url 'blog:recherche' %}" method="get" style="display: flex; width: 100%; gap: 0.5rem;">
+                        <div class="control has-icons-left" style="flex: 1;">
+                            <input class="input" type="search" name="q" placeholder="Rechercher un article, un livre...">
+                            <span class="icon is-left">
+                                <i class="hgi-stroke hgi-search-01"></i>
+                            </span>
+                        </div>
+                        <button type="submit" class="button is-primary">
+                            Rechercher
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Popular Searches -->
+                <div class="popular-searches">
+                    <span>Recherches populaires:</span>
+                    {% for cat in categories|slice:":3" %}
+                    <a href="{% url 'blog:categorie' cat.slug %}">{{ cat.nom }}{% if not forloop.last %},{% endif %}</a>
+                    {% empty %}
+                    <a href="#">Sciences de l'Éducation,</a>
+                    <a href="#">Pédagogie,</a>
+                    <a href="#">Recherche</a>
+                    {% endfor %}
+                </div>
+                
+                <!-- Trust Badges -->
+                <div class="trust-badges mt-5">
+                    <span class="text-muted is-size-7">Reconnu par:</span>
+                    <div class="badge-logo">
+                        <i class="hgi-stroke hgi-building-03"></i>
+                        Université
+                    </div>
+                    <div class="badge-logo">
+                        <i class="hgi-stroke hgi-book-02"></i>
+                        Chercheurs
+                    </div>
+                    <div class="badge-logo">
+                        <i class="hgi-stroke hgi-globe-02"></i>
+                        International
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Image -->
+            <div class="column is-6">
+                <div class="hero-image-container" style="position: relative;">
+                    {% if config_site.photo_profil %}
+                    <img src="{{ config_site.photo_profil }}" alt="Mr Talnan" class="hero-image" style="border-radius: 16px; max-width: 100%;">
+                    {% else %}
+                    <img src="https://picsum.photos/500/400?random=hero" alt="" class="hero-image" style="border-radius: 16px; max-width: 100%;">
+                    {% endif %}
+                    
+                    <!-- Floating Badge - Newsletter -->
+                    <div class="floating-badge floating" style="top: 10%; right: 5%;">
+                        <div class="icon is-orange">
+                            <i class="hgi-stroke hgi-mail-01"></i>
+                        </div>
+                        <span class="has-text-weight-semibold">S'abonner à la Newsletter</span>
+                    </div>
+                    
+                    <!-- Floating Badge - Stats -->
+                    <div class="floating-badge" style="bottom: 15%; right: 0;">
+                        <div class="avatar-stack">
+                            <img src="https://i.pravatar.cc/32?u=reader1" alt="">
+                            <img src="https://i.pravatar.cc/32?u=reader2" alt="">
+                            <img src="https://i.pravatar.cc/32?u=reader3" alt="">
+                            <img src="https://i.pravatar.cc/32?u=reader4" alt="">
+                            <div class="avatar-more">+</div>
+                        </div>
+                        <div>
+                            <div class="has-text-weight-bold text-primary">{{ stats.total_lecteurs|default:"500+" }}</div>
+                            <div class="is-size-7 text-muted">lecteurs fidèles</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature Cards Section -->
+<section class="section bg-light">
+    <div class="container">
+        <div class="columns">
+            <!-- For Readers -->
+            <div class="column is-6">
+                <div class="feature-card is-green" style="min-height: 220px;">
+                    <div class="feature-card-content">
+                        <h3 class="title is-4 mb-3">Pour les Lecteurs</h3>
+                        <p class="text-muted mb-4">
+                            Découvrez des articles académiques, des publications de recherche et des réflexions depuis l'Afrique.
+                        </p>
+                        <a href="{% url 'blog:liste_articles' %}" class="button is-primary is-rounded">
+                            Explorer les articles
+                        </a>
+                    </div>
+                    <img src="https://picsum.photos/200/200?random=reader" alt="" class="feature-card-image" style="opacity: 0.8;">
+                </div>
+            </div>
+            
+            <!-- For Researchers -->
+            <div class="column is-6">
+                <div class="feature-card is-yellow" style="min-height: 220px;">
+                    <div class="feature-card-content">
+                        <h3 class="title is-4 mb-3">Pour les Chercheurs</h3>
+                        <p class="text-muted mb-4">
+                            Accédez à notre librairie numérique. Livres et publications académiques en format PDF.
+                        </p>
+                        <a href="{% url 'blog:liste_livres' %}" class="button is-secondary is-rounded">
+                            Voir les livres
+                        </a>
+                    </div>
+                    <img src="https://picsum.photos/200/200?random=researcher" alt="" class="feature-card-image" style="opacity: 0.8;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+{% if categories %}
+<section class="section">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Catégories populaires</h2>
+                <p class="section-subtitle">{{ stats.total_articles|default:"50" }} articles – Explorez par thème</p>
+            </div>
+            <a href="{% url 'blog:liste_articles' %}" class="view-all">
+                Voir toutes les catégories
+                <i class="hgi-stroke hgi-arrow-right-01"></i>
+            </a>
+        </div>
+        
+        <!-- Categories Grid -->
+        <div class="columns is-multiline">
+            {% for cat in categories|slice:":4" %}
+            <div class="column is-3-desktop is-6-tablet">
+                <a href="{% url 'blog:categorie' cat.slug %}" class="category-card" style="display: block;">
+                    <div class="icon-wrapper {% cycle 'is-blue' 'is-teal' 'is-purple' 'is-orange' %}">
+                        <i class="hgi-stroke {% cycle 'hgi-code' 'hgi-chart-line-data-01' 'hgi-paint-brush-01' 'hgi-headset' %}"></i>
+                    </div>
+                    <h4 class="title is-6 mb-1">{{ cat.nom }}</h4>
+                    <p class="is-size-7 text-primary mb-2">{{ cat.nombre_articles|default:"0" }} articles</p>
+                    <p class="is-size-7 text-muted line-clamp-2">{{ cat.description|default:"Découvrez les articles de cette catégorie." }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Books Section -->
+{% if livres_vedettes %}
+<section class="section bg-light">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Livres populaires</h2>
+                <p class="section-subtitle">{{ stats.total_livres|default:"10" }} livres disponibles</p>
+            </div>
+            <a href="{% url 'blog:liste_livres' %}" class="view-all">
+                Voir tous les livres
+                <i class="hgi-stroke hgi-arrow-right-01"></i>
+            </a>
+        </div>
+        
+        <!-- Books Grid -->
+        <div class="columns is-multiline">
+            {% for livre in livres_vedettes|slice:":4" %}
+            <div class="column is-3-desktop is-6-tablet">
+                <article class="card">
+                    <a href="{% url 'blog:detail_livre' livre.slug %}" class="card-image img-hover-zoom">
+                        <figure class="image aspect-book">
+                            {% if livre.image_couverture %}
+                            <img src="{{ livre.image_couverture }}" alt="Couverture de {{ livre.titre }}" class="object-cover">
+                            {% else %}
+                            <img src="https://picsum.photos/300/400?random={{ forloop.counter }}" alt="Couverture" class="object-cover">
+                            {% endif %}
+                        </figure>
+                        {% if livre.est_nouveau %}
+                        <span class="tag is-warning" style="position: absolute; top: 10px; left: 10px;">Nouveau</span>
+                        {% endif %}
+                    </a>
+                    <div class="card-content">
+                        <h3 class="title is-6 mb-1 line-clamp-2">
+                            <a href="{% url 'blog:detail_livre' livre.slug %}">{{ livre.titre }}</a>
+                        </h3>
+                        <p class="is-size-7 text-muted mb-3">{{ livre.auteur }}</p>
+                        <div class="is-flex is-justify-content-space-between is-align-items-center">
+                            {% if livre.est_gratuit %}
+                            <span class="tag is-success is-light">
+                                <i class="hgi-stroke hgi-gift mr-1"></i> Gratuit
+                            </span>
+                            {% else %}
+                            <span class="has-text-weight-bold text-primary">{{ livre.prix|floatformat:0 }} FCFA</span>
+                            {% endif %}
+                            <a href="{% url 'blog:detail_livre' livre.slug %}" class="button is-small is-primary is-outlined">
+                                Voir
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Latest Articles Section -->
+{% if derniers_articles %}
+<section class="section">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Derniers articles</h2>
+                <p class="section-subtitle">{{ stats.total_articles|default:"50" }} articles publiés</p>
+            </div>
+            <a href="{% url 'blog:liste_articles' %}" class="view-all">
+                Voir tous les articles
+                <i class="hgi-stroke hgi-arrow-right-01"></i>
+            </a>
+        </div>
+        
+        <!-- Articles Grid -->
+        <div class="columns is-multiline">
+            {% for article in derniers_articles|slice:":4" %}
+            <div class="column is-6">
+                <article class="listing-card">
+                    <div class="is-flex" style="gap: 1rem;">
+                        <!-- Thumbnail -->
+                        <a href="{% url 'blog:detail_contenu' article.slug %}" class="img-hover-zoom" style="flex-shrink: 0;">
+                            <figure style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden;">
+                                {% if article.image_url %}
+                                <img src="{{ article.image_url }}" alt="" class="object-cover">
+                                {% else %}
+                                <img src="https://picsum.photos/80/80?random={{ forloop.counter|add:10 }}" alt="" class="object-cover">
+                                {% endif %}
+                            </figure>
+                        </a>
+                        
+                        <!-- Content -->
+                        <div style="flex: 1; min-width: 0;">
+                            <div class="is-flex is-align-items-center mb-2" style="gap: 0.5rem; flex-wrap: wrap;">
+                                <h3 class="title is-6 mb-0 line-clamp-2" style="flex: 1;">
+                                    <a href="{% url 'blog:detail_article' article.slug %}">{{ article.titre }}</a>
+                                </h3>
+                                <div class="is-flex" style="gap: 0.25rem;">
+                                    {% if article.est_vedette %}
+                                    <span class="icon has-text-warning" title="Vedette"><i class="hgi-stroke hgi-star"></i></span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <p class="is-size-7 text-muted mb-2">
+                                par <span class="has-text-weight-semibold">{{ article.auteur|default:'Mr Talnan' }}</span>
+                                {% if article.categories %}
+                                dans <a href="#" class="text-primary">{{ article.categories }}</a>
+                                {% endif %}
+                            </p>
+                            
+                            <div class="is-flex is-align-items-center" style="gap: 1rem; flex-wrap: wrap;">
+                                {% if article.est_nouveau %}
+                                <span class="badge-tag is-green">Nouveau</span>
+                                {% endif %}
+                                {% if article.temps_lecture %}
+                                <span class="is-size-7 text-muted">
+                                    <i class="hgi-stroke hgi-clock-01"></i> {{ article.temps_lecture }} min
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="columns is-mobile is-multiline">
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Articles publiés</div>
+                </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Catégories</div>
+                </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number">0+</div>
+                    <div class="stat-label">Lecteurs actifs</div>
+                </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-number">4.8</div>
+                    <div class="stat-label">Note moyenne</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section">
+    <div class="container">
+        <div class="has-text-centered" style="max-width: 600px; margin: 0 auto;">
+            <h2 class="title is-3 mb-3">Restons en contact</h2>
+            <p class="text-muted mb-5">
+                Inscrivez-vous à la newsletter pour recevoir les dernières publications 
+                et actualités académiques directement dans votre boîte mail.
+            </p>
+            <div class="buttons is-centered">
+                <a href="{% url 'blog:contact' %}" class="button is-primary is-medium">
+                    <span class="icon"><i class="hgi-stroke hgi-mail-01"></i></span>
+                    <span>Me contacter</span>
+                </a>
+                <a href="{% url 'blog:liste_livres' %}" class="button is-outlined is-medium">
+                    <span class="icon"><i class="hgi-stroke hgi-book-02"></i></span>
+                    <span>Voir mes livres</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

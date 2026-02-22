@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% comment %} Page À propos - Bulma CSS {% endcomment %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-banner" style="min-height: 35vh; padding: 3rem 0;">
+    <div class="container has-text-centered">
+        <h1 class="title is-1 has-text-white mb-3">À propos</h1>
+        <p class="subtitle is-5 has-text-white-ter">Découvrez mon parcours et ma mission</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <!-- Introduction -->
+                <div class="prose mb-6">
+                    <p class="is-size-5">
+                        <strong class="text-secondary">Mr Talnan</strong> est un universitaire reconnu internationalement
+                        dans le domaine des Sciences de l'Éducation. Professeur des Universités, il consacre sa carrière 
+                        à l'enseignement, la recherche et la transmission du savoir depuis l'Afrique vers le monde entier.
+                    </p>
+                </div>
+                
+                <!-- Mission Card -->
+                <div class="box bg-light mb-6">
+                    <h2 class="title is-4 text-primary mb-3">
+                        <i class="hgi-stroke hgi-target-02 mr-2"></i>
+                        Notre Mission
+                    </h2>
+                    <p class="text-muted">
+                        À travers ce blog académique, je souhaite partager mes recherches, publications et réflexions
+                        sur les Sciences de l'Éducation. Mon objectif est de rendre le savoir accessible à tous,
+                        d'accompagner les étudiants et chercheurs, et de contribuer au débat scientifique
+                        sur l'évolution de l'enseignement et de la pédagogie.
+                    </p>
+                </div>
+                
+                <!-- What You'll Find -->
+                <div class="mb-6">
+                    <h2 class="title is-4 text-primary mb-4">
+                        <i class="hgi-stroke hgi-task-01 mr-2"></i>
+                        Ce que vous trouverez ici
+                    </h2>
+                    <div class="content">
+                        <ul class="is-unstyled">
+                            <li class="is-flex is-align-items-start mb-3" style="gap: 0.75rem;">
+                                <span class="tag is-primary">📝</span>
+                                <span>Articles et publications scientifiques sur l'éducation</span>
+                            </li>
+                            <li class="is-flex is-align-items-start mb-3" style="gap: 0.75rem;">
+                                <span class="tag is-primary">💡</span>
+                                <span>Analyses des innovations pédagogiques</span>
+                            </li>
+                            <li class="is-flex is-align-items-start mb-3" style="gap: 0.75rem;">
+                                <span class="tag is-primary">🎓</span>
+                                <span>Réflexions sur l'enseignement supérieur</span>
+                            </li>
+                            <li class="is-flex is-align-items-start mb-3" style="gap: 0.75rem;">
+                                <span class="tag is-primary">📚</span>
+                                <span>Livres et ouvrages académiques (gratuits et payants en FCFA)</span>
+                            </li>
+                            <li class="is-flex is-align-items-start mb-3" style="gap: 0.75rem;">
+                                <span class="tag is-primary">🌍</span>
+                                <span>Actualités et comptes-rendus de conférences internationales</span>
+                            </li>
+                            <li class="is-flex is-align-items-start mb-3" style="gap: 0.75rem;">
+                                <span class="tag is-primary">📖</span>
+                                <span>Ressources pour étudiants et enseignants</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Parcours -->
+                <div class="box bg-dark mb-6" style="background-color: var(--bg-dark); color: white;">
+                    <h2 class="title is-4 has-text-white mb-3">
+                        <i class="hgi-stroke hgi-road mr-2 text-secondary"></i>
+                        Mon Parcours
+                    </h2>
+                    <p class="has-text-grey-light">
+                        Docteur en Sciences de l'Éducation depuis 2005, j'enseigne à l'université depuis plus de 20 ans.
+                        Mes recherches portent sur l'innovation pédagogique, l'évaluation des compétences et l'intégration
+                        des technologies numériques dans l'enseignement. J'ai publié de nombreux ouvrages et articles
+                        dans des revues internationales, et je participe régulièrement à des conférences et colloques 
+                        à travers l'Afrique et le monde.
+                    </p>
+                </div>
+                
+                <!-- Contact CTA -->
+                <div class="box bg-gradient-primary has-text-centered" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+                    <h2 class="title is-4 has-text-white mb-3">
+                        <i class="hgi-stroke hgi-message-02 mr-2"></i>
+                        Contact et Échange
+                    </h2>
+                    <p class="has-text-grey-lighter mb-5">
+                        Je suis toujours ravi d'échanger avec la communauté académique et tous ceux qui s'intéressent
+                        aux questions d'éducation. N'hésitez pas à me contacter pour toute question, collaboration
+                        ou simplement pour partager vos réflexions.
+                    </p>
+                    <div class="buttons is-centered">
+                        <a href="{% url 'blog:cv' %}" class="button is-outlined is-light">
+                            <span class="icon"><i class="hgi-stroke hgi-file-01"></i></span>
+                            <span>Voir mon CV complet</span>
+                        </a>
+                        <a href="{% url 'blog:contact' %}" class="button is-white">
+                            <span class="icon"><i class="hgi-stroke hgi-mail-01"></i></span>
+                            <span>Me contacter</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Back Link -->
+                <div class="has-text-centered mt-5">
+                    <a href="{% url 'blog:accueil' %}" class="button is-ghost">
+                        <span class="icon"><i class="hgi-stroke hgi-arrow-left-01"></i></span>
+                        <span>Retour à l'accueil</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

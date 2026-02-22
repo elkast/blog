@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% comment %} Page de détail d'un article/contenu - Bulma CSS {% endcomment %}
+
+{% block title %}{{ contenu.titre }}{% endblock %}
+{% block description %}{{ contenu.description_courte|default:contenu.description|truncatewords:30 }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Banner -->
+<section class="hero-banner" style="min-height: 50vh; position: relative;">
+    <!-- Background Image -->
+    <div style="position: absolute; inset: 0; z-index: 0;">
+        {% if contenu.banniere_url %}
+        <img src="{{ contenu.banniere_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+        {% elif contenu.image_url %}
+        <img src="{{ contenu.image_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <img src="https://picsum.photos/1920/800?random={{ contenu.id }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+        {% endif %}
+        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.3));"></div>
+    </div>
+    
+    <div class="container" style="position: relative; z-index: 1; padding: 4rem 1.5rem;">
+        <div class="columns is-vcentered">
+            <!-- Article Image -->
+            <div class="column is-3 is-hidden-mobile">
+                <div class="card" style="max-width: 200px; margin: 0 auto;">
+                    <div class="card-image">
+                        <figure class="image aspect-book">
+                            {% if contenu.affiche_url %}
+                            <img src="{{ contenu.affiche_url }}" alt="{{ contenu.titre }}" class="object-cover">
+                            {% elif contenu.image_url %}
+                            <img src="{{ contenu.image_url }}" alt="{{ contenu.titre }}" class="object-cover">
+                            {% else %}
+                            <img src="https://picsum.photos/300/400?random={{ contenu.id }}" alt="{{ contenu.titre }}" class="object-cover">
+                            {% endif %}
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Article Info -->
+            <div class="column">
+                <!-- Type Badge -->
+                <span class="tag is-warning is-medium mb-3">
+                    {% if contenu.type_article == 'publication' %}Publication
+                    {% elif contenu.type_article == 'recherche' %}Recherche
+                    {% elif contenu.type_article == 'actualite' %}Actualité
+                    {% else %}Article{% endif %}
+                </span>
+                
+                <!-- Title -->
+                <h1 class="title is-2 has-text-white mb-3">{{ contenu.titre }}</h1>
+                
+                {% if contenu.titre_original and contenu.titre_original != contenu.titre %}
+                <p class="has-text-grey-light mb-3">{{ contenu.titre_original }}</p>
+                {% endif %}
+                
+                <!-- Meta -->
+                <div class="is-flex is-flex-wrap-wrap mb-4" style="gap: 1rem;">
+                    {% if contenu.note %}
+                    {% include 'components/notation.html' with note=contenu.note %}
+                    {% endif %}
+                    <span class="icon-text has-text-white-ter">
+                        <span class="icon"><i class="hgi-stroke hgi-user"></i></span>
+                        <span>{{ contenu.auteur|default:'Mr Talnan' }}</span>
+                    </span>
+                    {% if contenu.temps_lecture %}
+                    <span class="icon-text has-text-white-ter">
+                        <span class="icon"><i class="hgi-stroke hgi-clock-01"></i></span>
+                        <span>{{ contenu.temps_lecture }} min</span>
+                    </span>
+                    {% endif %}
+                    {% if contenu.annee %}
+                    <span class="icon-text has-text-white-ter">
+                        <span class="icon"><i class="hgi-stroke hgi-calendar-03"></i></span>
+                        <span>{{ contenu.annee }}</span>
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Categories -->
+                {% if contenu.categories %}
+                <div class="tags mb-4">
+                    <span class="tag is-light is-medium">{{ contenu.categories }}</span>
+                </div>
+                {% endif %}
+                
+                <!-- Description -->
+                <p class="has-text-white-ter is-size-5 mb-5" style="max-width: 600px;">
+                    {{ contenu.description|default:contenu.extrait|truncatewords:50 }}
+                </p>
+                
+                <!-- Actions -->
+                <div class="buttons">
+                    {% if contenu.trailer_url %}
+                    <a href="{{ contenu.trailer_url }}" target="_blank" class="button is-primary is-medium">
+                        <span class="icon"><i class="hgi-stroke hgi-play"></i></span>
+                        <span>Voir le trailer</span>
+                    </a>
+                    {% endif %}
+                    <button onclick="history.back()" class="button is-ghost has-text-white is-medium">
+                        <span class="icon"><i class="hgi-stroke hgi-arrow-left-01"></i></span>
+                        <span>Retour</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Article Content -->
+<section class="section">
+    <div class="container">
+        <div class="content-container">
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumb mb-5" aria-label="breadcrumbs">
+                <ul>
+                    <li><a href="{% url 'blog:accueil' %}"><i class="hgi-stroke hgi-home-01 mr-1"></i>Accueil</a></li>
+                    <li><a href="{% url 'blog:liste_articles' %}">Articles</a></li>
+                    <li class="is-active"><a href="#">{{ contenu.titre|truncatewords:5 }}</a></li>
+                </ul>
+            </nav>
+            
+            <!-- Content -->
+            <article class="prose">
+                {{ contenu.contenu|safe|linebreaks }}
+            </article>
+            
+            <!-- Share -->
+            <div class="divider mt-6 mb-5">Partager cet article</div>
+            <div class="is-flex is-justify-content-center" style="gap: 0.5rem;">
+                <a href="https://twitter.com/share?url={{ request.build_absolute_uri }}&text={{ contenu.titre }}" 
+                   target="_blank" class="button is-rounded" title="Twitter">
+                    <span class="icon"><i class="hgi-stroke hgi-new-twitter"></i></span>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                   target="_blank" class="button is-rounded" title="Facebook">
+                    <span class="icon"><i class="hgi-stroke hgi-facebook-02"></i></span>
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ contenu.titre }}" 
+                   target="_blank" class="button is-rounded" title="LinkedIn">
+                    <span class="icon"><i class="hgi-stroke hgi-linkedin-02"></i></span>
+                </a>
+                <a href="mailto:?subject={{ contenu.titre }}&body={{ request.build_absolute_uri }}" 
+                   class="button is-rounded" title="Email">
+                    <span class="icon"><i class="hgi-stroke hgi-mail-01"></i></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Content -->
+{% if similaires %}
+<section class="section bg-light">
+    <div class="container">
+        <h2 class="title is-4 text-primary mb-5">Vous aimerez aussi</h2>
+        <div class="columns is-multiline">
+            {% for item in similaires %}
+            <div class="column is-3-desktop is-6-tablet">
+                <article class="card">
+                    <a href="{% url 'blog:detail_article' item.slug %}" class="card-image img-hover-zoom">
+                        <figure class="image aspect-video">
+                            {% if item.image_url %}
+                            <img src="{{ item.image_url }}" alt="{{ item.titre }}" class="object-cover">
+                            {% else %}
+                            <img src="https://picsum.photos/400/250?random={{ forloop.counter }}" alt="{{ item.titre }}" class="object-cover">
+                            {% endif %}
+                        </figure>
+                    </a>
+                    <div class="card-content">
+                        <h3 class="title is-6 line-clamp-2">
+                            <a href="{% url 'blog:detail_contenu' item.slug %}">{{ item.titre }}</a>
+                        </h3>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

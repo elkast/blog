@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% comment %} Page de détail d'un livre - Bulma CSS {% endcomment %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumb mb-5" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="{% url 'blog:accueil' %}"><i class="hgi-stroke hgi-home-01 mr-1"></i>Accueil</a></li>
+                <li><a href="{% url 'blog:liste_livres' %}">Livres</a></li>
+                <li class="is-active"><a href="#">{{ livre.titre|truncatewords:5 }}</a></li>
+            </ul>
+        </nav>
+        
+        <div class="columns">
+            <!-- Book Cover Section -->
+            <div class="column is-4">
+                <div class="is-sticky" style="top: 80px;">
+                    <!-- Cover Image -->
+                    <div class="card mb-4">
+                        <div class="card-image">
+                            <figure class="image aspect-book" style="position: relative;">
+                                {% if livre.image_couverture %}
+                                <img src="{{ livre.image_couverture }}" alt="{{ livre.titre }}" class="object-cover">
+                                {% else %}
+                                <img src="https://picsum.photos/400/600?random=1" alt="{{ livre.titre }}" class="object-cover">
+                                {% endif %}
+                                
+                                {% if livre.est_nouveau %}
+                                <span class="tag is-warning is-medium" style="position: absolute; top: 15px; left: 15px;">Nouveau</span>
+                                {% endif %}
+                            </figure>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    {% if livre.est_gratuit %}
+                    <a href="{% url 'blog:telecharger_livre_gratuit' livre.slug %}" class="button is-success is-fullwidth is-medium mb-3">
+                        <span class="icon"><i class="hgi-stroke hgi-download-04"></i></span>
+                        <span>Télécharger gratuitement</span>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'blog:acheter_livre' livre.slug %}" class="button is-primary is-fullwidth is-medium mb-3">
+                        <span class="icon"><i class="hgi-stroke hgi-shopping-cart-01"></i></span>
+                        <span>Acheter - {{ livre.prix|floatformat:0 }} FCFA</span>
+                    </a>
+                    {% endif %}
+                    
+                    {% if livre.fichier_preview %}
+                    <a href="{{ livre.fichier_preview }}" target="_blank" class="button is-outlined is-fullwidth">
+                        <span class="icon"><i class="hgi-stroke hgi-view"></i></span>
+                        <span>Aperçu gratuit</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Book Info Section -->
+            <div class="column is-8">
+                <h1 class="title is-2 text-primary mb-3">{{ livre.titre }}</h1>
+                
+                <!-- Meta Info -->
+                <div class="is-flex is-flex-wrap-wrap mb-4" style="gap: 1.5rem;">
+                    <span class="icon-text text-muted">
+                        <span class="icon"><i class="hgi-stroke hgi-user"></i></span>
+                        <span>{{ livre.auteur }}{% if livre.co_auteurs %}, {{ livre.co_auteurs }}{% endif %}</span>
+                    </span>
+                    {% if livre.annee_publication %}
+                    <span class="icon-text text-muted">
+                        <span class="icon"><i class="hgi-stroke hgi-calendar-03"></i></span>
+                        <span>{{ livre.annee_publication }}</span>
+                    </span>
+                    {% endif %}
+                    {% if livre.editeur %}
+                    <span class="icon-text text-muted">
+                        <span class="icon"><i class="hgi-stroke hgi-building-03"></i></span>
+                        <span>{{ livre.editeur }}</span>
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Price Badge -->
+                <div class="mb-5">
+                    {% if livre.est_gratuit %}
+                    <span class="tag is-success is-large">
+                        <i class="hgi-stroke hgi-gift mr-1"></i> Gratuit
+                    </span>
+                    {% else %}
+                    <span class="tag is-primary is-large">{{ livre.prix|floatformat:0 }} FCFA</span>
+                    {% endif %}
+                </div>
+                
+                <!-- Categories -->
+                {% if livre.categories %}
+                <div class="tags mb-5">
+                    {% for cat in livre.categories.split %}
+                    <span class="tag is-light">{{ cat }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Description -->
+                <div class="box mb-5">
+                    <h2 class="title is-5 text-primary mb-3">
+                        <i class="hgi-stroke hgi-text mr-2"></i>Description
+                    </h2>
+                    <div class="prose">
+                        {{ livre.description|linebreaks }}
+                    </div>
+                </div>
+                
+                <!-- Excerpt -->
+                {% if livre.extrait %}
+                <div class="box mb-5 bg-primary-light">
+                    <h2 class="title is-5 text-primary mb-3">
+                        <i class="hgi-stroke hgi-quote-up mr-2"></i>Extrait
+                    </h2>
+                    <blockquote style="border-left: 4px solid var(--primary); padding-left: 1rem; font-style: italic;">
+                        {{ livre.extrait|linebreaks }}
+                    </blockquote>
+                </div>
+                {% endif %}
+                
+                <!-- Technical Details -->
+                <div class="box">
+                    <h2 class="title is-5 text-primary mb-4">
+                        <i class="hgi-stroke hgi-information-circle mr-2"></i>Informations
+                    </h2>
+                    <div class="columns is-multiline">
+                        {% if livre.isbn %}
+                        <div class="column is-6">
+                            <div class="notification is-light">
+                                <p class="is-size-7 text-muted mb-1">ISBN</p>
+                                <p class="has-text-weight-semibold">{{ livre.isbn }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if livre.nombre_pages %}
+                        <div class="column is-6">
+                            <div class="notification is-light">
+                                <p class="is-size-7 text-muted mb-1">Pages</p>
+                                <p class="has-text-weight-semibold">{{ livre.nombre_pages }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="column is-6">
+                            <div class="notification is-light">
+                                <p class="is-size-7 text-muted mb-1">Langue</p>
+                                <p class="has-text-weight-semibold">{{ livre.langue|default:"Français" }}</p>
+                            </div>
+                        </div>
+                        {% if livre.nombre_telechargements %}
+                        <div class="column is-6">
+                            <div class="notification is-light">
+                                <p class="is-size-7 text-muted mb-1">Téléchargements</p>
+                                <p class="has-text-weight-semibold">{{ livre.nombre_telechargements }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Books -->
+        {% if autres_livres %}
+        <div class="mt-6 pt-6" style="border-top: 1px solid var(--border);">
+            <h2 class="title is-4 text-primary mb-5">Autres publications</h2>
+            <div class="columns is-multiline">
+                {% for autre in autres_livres %}
+                <div class="column is-3-desktop is-6-tablet">
+                    <article class="card">
+                        <a href="{% url 'blog:detail_livre' autre.slug %}" class="card-image img-hover-zoom">
+                            <figure class="image aspect-book">
+                                {% if autre.image_couverture %}
+                                <img src="{{ autre.image_couverture }}" alt="{{ autre.titre }}" class="object-cover">
+                                {% else %}
+                                <img src="https://picsum.photos/300/400?random={{ forloop.counter }}" alt="{{ autre.titre }}" class="object-cover">
+                                {% endif %}
+                            </figure>
+                        </a>
+                        <div class="card-content">
+                            <h3 class="title is-6 line-clamp-2">
+                                <a href="{% url 'blog:detail_livre' autre.slug %}">{{ autre.titre }}</a>
+                            </h3>
+                            <p class="mt-2">
+                                {% if autre.est_gratuit %}
+                                <span class="text-success has-text-weight-semibold">Gratuit</span>
+                                {% else %}
+                                <span class="has-text-weight-bold text-primary">{{ autre.prix|floatformat:0 }} FCFA</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

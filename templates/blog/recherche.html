@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% comment %} Page de recherche - Bulma CSS {% endcomment %}
+
+{% block content %}
+<section class="section" style="min-height: 80vh;">
+    <div class="container">
+        <!-- Search Form -->
+        <div class="has-text-centered mb-6" style="max-width: 600px; margin: 0 auto;">
+            <h1 class="title is-2 text-primary mb-5">
+                <i class="hgi-stroke hgi-search-01 mr-2"></i>
+                Recherche
+            </h1>
+            
+            <form action="{% url 'blog:recherche' %}" method="get">
+                <div class="field has-addons">
+                    <div class="control is-expanded has-icons-left">
+                        <input class="input is-medium" type="search" name="q" id="search-input"
+                               placeholder="Rechercher des articles et livres..."
+                               value="{{ terme_recherche }}" autofocus>
+                        <span class="icon is-left"><i class="hgi-stroke hgi-search-01"></i></span>
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button is-primary is-medium">Rechercher</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Results Container -->
+        <div id="search-results">
+            {% if terme_recherche %}
+            <!-- Results Header -->
+            <div class="has-text-centered mb-5">
+                {% if nombre_resultats > 0 %}
+                <p class="title is-5">{{ nombre_resultats }} résultat{{ nombre_resultats|pluralize }} pour "{{ terme_recherche }}"</p>
+                {% else %}
+                <p class="title is-5 text-muted">Aucun résultat pour "{{ terme_recherche }}"</p>
+                {% endif %}
+            </div>
+            
+            {% if resultats %}
+            <div class="columns is-multiline">
+                {% for contenu in resultats %}
+                <div class="column is-3-desktop is-4-tablet is-6-mobile">
+                    <article class="card">
+                        <a href="{% if contenu.type == 'livre' %}{% url 'blog:detail_livre' contenu.slug %}{% else %}{% url 'blog:detail_article' contenu.slug %}{% endif %}"
+                           class="card-image img-hover-zoom" style="position: relative;">
+                            <figure class="image {% if contenu.type == 'livre' %}aspect-book{% else %}aspect-video{% endif %}">
+                                {% if contenu.image %}
+                                <img src="{{ contenu.image }}" alt="{{ contenu.titre }}" class="object-cover">
+                                {% else %}
+                                <img src="https://picsum.photos/300/400?random={{ forloop.counter }}" alt="{{ contenu.titre }}" class="object-cover">
+                                {% endif %}
+                            </figure>
+                            
+                            <span class="tag {% if contenu.type == 'livre' %}is-success{% else %}is-primary{% endif %}" style="position: absolute; top: 10px; left: 10px;">
+                                {% if contenu.type == 'livre' %}Livre{% else %}Article{% endif %}
+                            </span>
+                        </a>
+                        
+                        <div class="card-content">
+                            <h3 class="title is-6 line-clamp-2">
+                                <a href="{% if contenu.type == 'livre' %}{% url 'blog:detail_livre' contenu.slug %}{% else %}{% url 'blog:detail_contenu' contenu.slug %}{% endif %}">
+                                    {{ contenu.titre }}
+                                </a>
+                            </h3>
+                            {% if contenu.prix %}
+                            <p class="has-text-weight-semibold text-primary is-size-7">{{ contenu.prix }}</p>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- No Results -->
+            <div class="empty-state">
+                <span class="empty-state-icon"><i class="hgi-stroke hgi-search-minus"></i></span>
+                <h3 class="title is-4 mt-4">Aucun résultat trouvé</h3>
+                <p class="text-muted">Essayez avec d'autres termes de recherche.</p>
+                
+                <div class="mt-5">
+                    <p class="is-size-7 text-muted mb-3">Suggestions:</p>
+                    <div class="buttons is-centered">
+                        <a href="{% url 'blog:liste_articles' %}" class="button is-small is-outlined">Articles</a>
+                        <a href="{% url 'blog:liste_livres' %}" class="button is-small is-outlined">Livres</a>
+                        {% for cat in categories|slice:":5" %}
+                        <a href="{% url 'blog:categorie' cat.slug %}" class="button is-small is-ghost">{{ cat.nom }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% else %}
+            <!-- Initial State -->
+            <div class="empty-state">
+                <span class="empty-state-icon"><i class="hgi-stroke hgi-search-01"></i></span>
+                <h3 class="title is-4 mt-4">Rechercher du contenu</h3>
+                <p class="text-muted">Commencez à taper pour rechercher des articles et livres.</p>
+                
+                <div class="mt-5">
+                    <p class="is-size-7 text-muted mb-3">Catégories populaires:</p>
+                    <div class="buttons is-centered">
+                        {% for cat in categories %}
+                        <a href="{% url 'blog:categorie' cat.slug %}" class="button is-small is-outlined">{{ cat.nom }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const resultsContainer = document.getElementById('search-results');
+    let searchTimeout;
+    
+    function performSearch(query) {
+        if (query.length < 2) return;
+        
+        resultsContainer.innerHTML = `
+            <div class="has-text-centered py-6">
+                <span class="icon is-large"><i class="hgi-stroke hgi-loading-03 spin" style="font-size: 2rem;"></i></span>
+                <p class="mt-3 text-muted">Recherche en cours...</p>
+            </div>
+        `;
+        
+        fetch(`{% url 'blog:api_recherche' %}?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data.resultats, query);
+            })
+            .catch(error => {
+                resultsContainer.innerHTML = `
+                    <div class="notification is-danger is-light" style="max-width: 400px; margin: 0 auto;">
+                        <i class="hgi-stroke hgi-alert-circle mr-2"></i>
+                        Erreur lors de la recherche. Veuillez réessayer.
+                    </div>
+                `;
+            });
+    }
+    
+    function displayResults(results, query) {
+        if (!results || results.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="has-text-centered mb-5">
+                    <p class="title is-5 text-muted">Aucun résultat pour "${query}"</p>
+                </div>
+                <div class="empty-state">
+                    <span class="empty-state-icon"><i class="hgi-stroke hgi-search-minus"></i></span>
+                    <p class="mt-4 text-muted">Essayez avec d'autres termes.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = `
+            <div class="has-text-centered mb-5">
+                <p class="title is-5">${results.length} résultat${results.length > 1 ? 's' : ''} pour "${query}"</p>
+            </div>
+            <div class="columns is-multiline">
+        `;
+        
+        results.forEach((item, index) => {
+            const isBook = item.type === 'livre';
+            const aspectClass = isBook ? 'aspect-book' : 'aspect-video';
+            const tagClass = isBook ? 'is-success' : 'is-primary';
+            const tagText = isBook ? 'Livre' : 'Article';
+            
+            html += `
+                <div class="column is-3-desktop is-4-tablet is-6-mobile">
+                    <article class="card">
+                        <a href="${item.url}" class="card-image img-hover-zoom" style="position: relative;">
+                            <figure class="image ${aspectClass}">
+                                <img src="${item.image || 'https://picsum.photos/300/400?random=' + index}" alt="${item.titre}" class="object-cover">
+                            </figure>
+                            <span class="tag ${tagClass}" style="position: absolute; top: 10px; left: 10px;">${tagText}</span>
+                        </a>
+                        <div class="card-content">
+                            <h3 class="title is-6 line-clamp-2">
+                                <a href="${item.url}">${item.titre}</a>
+                            </h3>
+                            ${item.prix ? `<p class="has-text-weight-semibold text-primary is-size-7">${item.prix}</p>` : ''}
+                        </div>
+                    </article>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        resultsContainer.innerHTML = html;
+    }
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            if (query.length >= 2) {
+                performSearch(query);
+            }
+        }, 300);
+    });
+});
+</script>
+{% endblock %}

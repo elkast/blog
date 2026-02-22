@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% comment %} Page CV - daisyUI {% endcomment %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero bg-gradient-primary min-h-[40vh] py-20">
+    <div class="hero-content text-center text-neutral-content">
+        <div class="max-w-2xl">
+            <h1 class="text-4xl md:text-5xl font-heading font-bold mb-4">CV & Parcours</h1>
+            <p class="text-lg opacity-90">Mon parcours académique et professionnel</p>
+        </div>
+    </div>
+</section>
+
+<section class="py-12 lg:py-16 bg-base-100">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto">
+            <!-- Profile Card -->
+            <div class="card bg-base-200 shadow-xl mb-12">
+                <div class="card-body">
+                    <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+                        <div class="avatar">
+                            <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                {% if config_site.photo_profil %}
+                                <img src="{{ config_site.photo_profil }}" alt="Mr Talnan" />
+                                {% else %}
+                                <div class="bg-gradient-primary text-white text-5xl flex items-center justify-center">
+                                    👨‍🏫
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h2 class="text-2xl font-heading font-bold text-primary-custom">Mr Talnan</h2>
+                            <p class="text-lg opacity-70">Professeur des Universités</p>
+                            <p class="opacity-60">Sciences de l'Éducation</p>
+                            <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                                <span class="badge badge-primary">Recherche</span>
+                                <span class="badge badge-secondary">Enseignement</span>
+                                <span class="badge badge-accent">Publications</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timeline -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-heading font-bold text-primary-custom mb-8">
+                    <i class="ti ti-timeline mr-2"></i>
+                    Parcours Professionnel
+                </h2>
+                
+                <ul class="timeline timeline-vertical">
+                    <li>
+                        <div class="timeline-start timeline-box bg-base-200">
+                            <time class="font-mono text-sm opacity-60">2015 - Présent</time>
+                            <div class="text-lg font-bold text-primary-custom">Professeur des Universités</div>
+                            <p class="opacity-70">Université - Afrique de l'Ouest</p>
+                        </div>
+                        <div class="timeline-middle">
+                            <i class="ti ti-circle-check text-primary"></i>
+                        </div>
+                        <hr class="bg-primary"/>
+                    </li>
+                    <li>
+                        <hr class="bg-primary"/>
+                        <div class="timeline-middle">
+                            <i class="ti ti-circle-check text-primary"></i>
+                        </div>
+                        <div class="timeline-end timeline-box bg-base-200">
+                            <time class="font-mono text-sm opacity-60">2010 - 2015</time>
+                            <div class="text-lg font-bold text-primary-custom">Maître de Conférences</div>
+                            <p class="opacity-70">Recherche et enseignement supérieur</p>
+                        </div>
+                        <hr class="bg-primary"/>
+                    </li>
+                    <li>
+                        <hr class="bg-primary"/>
+                        <div class="timeline-start timeline-box bg-base-200">
+                            <time class="font-mono text-sm opacity-60">2005 - 2010</time>
+                            <div class="text-lg font-bold text-primary-custom">Docteur en Sciences de l'Éducation</div>
+                            <p class="opacity-70">Thèse et premiers travaux de recherche</p>
+                        </div>
+                        <div class="timeline-middle">
+                            <i class="ti ti-circle-check text-primary"></i>
+                        </div>
+                        <hr class="bg-primary"/>
+                    </li>
+                    <li>
+                        <hr class="bg-primary"/>
+                        <div class="timeline-middle">
+                            <i class="ti ti-circle-check text-primary"></i>
+                        </div>
+                        <div class="timeline-end timeline-box bg-base-200">
+                            <time class="font-mono text-sm opacity-60">2000 - 2005</time>
+                            <div class="text-lg font-bold text-primary-custom">Doctorat</div>
+                            <p class="opacity-70">Préparation de la thèse</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Expertise -->
+            <div class="card bg-neutral text-neutral-content mb-12">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl font-heading mb-6">
+                        <i class="ti ti-brain mr-2 text-secondary-custom"></i>
+                        Domaines d'expertise
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-school text-2xl text-secondary-custom"></i>
+                            <span>Innovation pédagogique</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-chart-bar text-2xl text-secondary-custom"></i>
+                            <span>Évaluation des compétences</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-device-laptop text-2xl text-secondary-custom"></i>
+                            <span>Technologies éducatives</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-users text-2xl text-secondary-custom"></i>
+                            <span>Formation des enseignants</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-book text-2xl text-secondary-custom"></i>
+                            <span>Didactique</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-world text-2xl text-secondary-custom"></i>
+                            <span>Éducation en Afrique</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats stats-vertical lg:stats-horizontal shadow-lg w-full mb-12">
+                <div class="stat">
+                    <div class="stat-figure text-primary-custom">
+                        <i class="ti ti-book text-3xl"></i>
+                    </div>
+                    <div class="stat-title">Livres publiés</div>
+                    <div class="stat-value text-primary-custom">10+</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-figure text-secondary-custom">
+                        <i class="ti ti-article text-3xl"></i>
+                    </div>
+                    <div class="stat-title">Articles</div>
+                    <div class="stat-value text-secondary-custom">50+</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-figure text-accent">
+                        <i class="ti ti-world text-3xl"></i>
+                    </div>
+                    <div class="stat-title">Conférences</div>
+                    <div class="stat-value text-accent">30+</div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="{% url 'blog:liste_publications' %}" class="btn btn-primary gap-2">
+                    <i class="ti ti-file-text"></i>
+                    Voir mes publications
+                </a>
+                <a href="{% url 'blog:liste_livres' %}" class="btn btn-outline gap-2">
+                    <i class="ti ti-book"></i>
+                    Voir mes livres
+                </a>
+                <a href="{% url 'blog:contact' %}" class="btn btn-ghost gap-2">
+                    <i class="ti ti-mail"></i>
+                    Me contacter
+                </a>
+            </div>
+            
+            <!-- Back Link -->
+            <div class="text-center mt-8">
+                <a href="{% url 'blog:accueil' %}" class="btn btn-ghost gap-2">
+                    <i class="ti ti-arrow-left"></i>
+                    Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

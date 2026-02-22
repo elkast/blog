@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% comment %} 
+Liste des livres - Bulma CSS
+Blog Académique Mr Talnan
+{% endcomment %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="hero-banner" style="min-height: 40vh; padding: 4rem 0;">
+    <div class="container has-text-centered">
+        <h1 class="title is-1 has-text-white mb-3">
+            <span>📚</span> {{ titre_page|default:"Mes Livres" }}
+        </h1>
+        <p class="subtitle is-5 has-text-white-ter mb-5">
+            Découvrez <strong>{{ livres.paginator.count|default:"plusieurs" }}</strong> 
+            ouvrages académiques et publications. Prix en FCFA.
+        </p>
+        
+        <!-- Filters -->
+        <div class="buttons is-centered">
+            <a href="{% url 'blog:liste_livres' %}" 
+               class="button {% if not filtre_gratuit and not filtre_nouveau %}is-secondary{% else %}is-outlined is-light{% endif %}">
+                <span class="icon"><i class="hgi-stroke hgi-book-02"></i></span>
+                <span>Tous</span>
+            </a>
+            <a href="{% url 'blog:liste_livres' %}?gratuit=1" 
+               class="button {% if filtre_gratuit == '1' %}is-secondary{% else %}is-outlined is-light{% endif %}">
+                <span class="icon"><i class="hgi-stroke hgi-gift"></i></span>
+                <span>Gratuits</span>
+            </a>
+            <a href="{% url 'blog:liste_livres' %}?gratuit=0" 
+               class="button {% if filtre_gratuit == '0' %}is-secondary{% else %}is-outlined is-light{% endif %}">
+                <span class="icon"><i class="hgi-stroke hgi-coins-01"></i></span>
+                <span>Payants</span>
+            </a>
+            <a href="{% url 'blog:liste_livres' %}?nouveau=1" 
+               class="button {% if filtre_nouveau == '1' %}is-secondary{% else %}is-outlined is-light{% endif %}">
+                <span class="icon"><i class="hgi-stroke hgi-sparkles"></i></span>
+                <span>Nouveautés</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Books Grid -->
+<section class="section">
+    <div class="container">
+        {% if livres %}
+        <div class="columns is-multiline">
+            {% for livre in livres %}
+            <div class="column is-3-desktop is-4-tablet is-6-mobile">
+                <article class="card">
+                    <a href="{% url 'blog:detail_livre' livre.slug %}" class="card-image img-hover-zoom" style="position: relative;">
+                        <figure class="image aspect-book">
+                            {% if livre.image_couverture %}
+                            <img src="{{ livre.image_couverture }}" alt="Couverture de {{ livre.titre }}" class="object-cover">
+                            {% else %}
+                            <img src="https://picsum.photos/300/400?random={{ forloop.counter }}" alt="Couverture" class="object-cover">
+                            {% endif %}
+                        </figure>
+                        
+                        <!-- Badges -->
+                        <div style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 4px;">
+                            {% if livre.est_nouveau %}
+                            <span class="tag is-warning">Nouveau</span>
+                            {% endif %}
+                            {% if livre.est_vedette %}
+                            <span class="tag is-info">Vedette</span>
+                            {% endif %}
+                        </div>
+                        {% if livre.est_gratuit %}
+                        <span class="tag is-success" style="position: absolute; top: 10px; right: 10px;">
+                            <i class="hgi-stroke hgi-gift mr-1"></i> Gratuit
+                        </span>
+                        {% endif %}
+                    </a>
+                    
+                    <div class="card-content">
+                        <h2 class="title is-6 mb-1 line-clamp-2">
+                            <a href="{% url 'blog:detail_livre' livre.slug %}">{{ livre.titre }}</a>
+                        </h2>
+                        <p class="is-size-7 text-muted">{{ livre.auteur }}</p>
+                        
+                        {% if livre.annee_publication %}
+                        <p class="is-size-7 text-muted">{{ livre.annee_publication }}</p>
+                        {% endif %}
+                        
+                        <!-- Price & Actions -->
+                        <div class="is-flex is-justify-content-space-between is-align-items-center mt-3 pt-3" style="border-top: 1px solid var(--border);">
+                            {% if livre.est_gratuit %}
+                            <span class="tag is-success is-medium">
+                                <i class="hgi-stroke hgi-gift mr-1"></i> Gratuit
+                            </span>
+                            <a href="{% url 'blog:telecharger_livre_gratuit' livre.slug %}" class="button is-success is-small">
+                                <span class="icon"><i class="hgi-stroke hgi-download-04"></i></span>
+                            </a>
+                            {% else %}
+                            <span class="has-text-weight-bold text-primary">{{ livre.prix|floatformat:0 }} <small>FCFA</small></span>
+                            <a href="{% url 'blog:acheter_livre' livre.slug %}" class="button is-primary is-small">
+                                <span class="icon"><i class="hgi-stroke hgi-shopping-cart-01"></i></span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if livres.has_other_pages %}
+        <nav class="pagination is-centered mt-6" role="navigation">
+            {% if livres.has_previous %}
+            <a href="?page={{ livres.previous_page_number }}{% if filtre_gratuit %}&gratuit={{ filtre_gratuit }}{% endif %}{% if filtre_nouveau %}&nouveau={{ filtre_nouveau }}{% endif %}" 
+               class="pagination-previous">
+                <span class="icon"><i class="hgi-stroke hgi-arrow-left-01"></i></span>
+                <span>Précédent</span>
+            </a>
+            {% else %}
+            <a class="pagination-previous" disabled>Précédent</a>
+            {% endif %}
+            
+            {% if livres.has_next %}
+            <a href="?page={{ livres.next_page_number }}{% if filtre_gratuit %}&gratuit={{ filtre_gratuit }}{% endif %}{% if filtre_nouveau %}&nouveau={{ filtre_nouveau }}{% endif %}" 
+               class="pagination-next">
+                <span>Suivant</span>
+                <span class="icon"><i class="hgi-stroke hgi-arrow-right-01"></i></span>
+            </a>
+            {% else %}
+            <a class="pagination-next" disabled>Suivant</a>
+            {% endif %}
+            
+            <ul class="pagination-list">
+                <li><span class="pagination-link is-current">Page {{ livres.number }} sur {{ livres.paginator.num_pages }}</span></li>
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <span class="empty-state-icon"><i class="hgi-stroke hgi-book-open"></i></span>
+            <h2 class="title is-4 mt-4">Aucun livre disponible</h2>
+            <p class="text-muted">Revenez bientôt pour découvrir de nouvelles publications.</p>
+            <a href="{% url 'blog:accueil' %}" class="button is-primary mt-4">
+                <span class="icon"><i class="hgi-stroke hgi-home-01"></i></span>
+                <span>Retour à l'accueil</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- How to Buy Section -->
+<section class="section bg-light">
+    <div class="container">
+        <div class="has-text-centered" style="max-width: 800px; margin: 0 auto;">
+            <h2 class="title is-3 text-primary mb-4">Comment acheter un livre ?</h2>
+            <p class="text-muted mb-6">
+                L'achat de livres se fait en FCFA (Franc CFA) pour faciliter les transactions en Afrique.
+            </p>
+            
+            <div class="columns">
+                <div class="column">
+                    <div class="box has-text-centered">
+                        <span class="is-size-2">1️⃣</span>
+                        <h3 class="title is-5 mt-3 mb-2">Choisissez</h3>
+                        <p class="is-size-7 text-muted">Sélectionnez le livre qui vous intéresse</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box has-text-centered">
+                        <span class="is-size-2">2️⃣</span>
+                        <h3 class="title is-5 mt-3 mb-2">Payez</h3>
+                        <p class="is-size-7 text-muted">Effectuez le paiement sécurisé en FCFA</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box has-text-centered">
+                        <span class="is-size-2">3️⃣</span>
+                        <h3 class="title is-5 mt-3 mb-2">Téléchargez</h3>
+                        <p class="is-size-7 text-muted">Recevez votre livre immédiatement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

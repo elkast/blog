@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% comment %} Page Conditions d'utilisation - daisyUI {% endcomment %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero bg-gradient-primary min-h-[35vh] py-16">
+    <div class="hero-content text-center text-neutral-content">
+        <div class="max-w-2xl">
+            <h1 class="text-4xl md:text-5xl font-heading font-bold mb-4">Conditions d'Utilisation</h1>
+            <p class="opacity-80">Dernière mise à jour: {% now "d F Y" %}</p>
+        </div>
+    </div>
+</section>
+
+<section class="py-12 bg-base-100">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto prose prose-lg prose-custom">
+            
+            <h2>1. Acceptation des conditions</h2>
+            <p>
+                En accédant et en utilisant ce blog académique, vous acceptez d'être lié par ces 
+                conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez 
+                ne pas utiliser notre service.
+            </p>
+            
+            <h2>2. Utilisation du service</h2>
+            <p>
+                Ce blog est un service de partage de connaissances académiques. Vous vous engagez à:
+            </p>
+            <ul>
+                <li>Utiliser le service conformément à la loi</li>
+                <li>Ne pas tenter d'accéder de manière non autorisée au service</li>
+                <li>Ne pas perturber le fonctionnement du service</li>
+                <li>Respecter les droits de propriété intellectuelle</li>
+            </ul>
+            
+            <h2>3. Achats et paiements</h2>
+            <p>
+                Les livres payants sont vendus en <strong>FCFA (Franc CFA)</strong>. 
+                Une fois le paiement effectué, vous recevrez un lien de téléchargement par email.
+                Les achats sont définitifs et non remboursables, sauf en cas de problème technique.
+            </p>
+            
+            <h2>4. Propriété intellectuelle</h2>
+            <p>
+                Tout le contenu de ce blog, y compris les textes, articles, livres, graphiques et 
+                logiciels, est protégé par les droits de propriété intellectuelle. 
+                Toute reproduction non autorisée est interdite.
+            </p>
+            
+            <h2>5. Limitation de responsabilité</h2>
+            <p>
+                L'auteur ne peut être tenu responsable des dommages directs ou indirects 
+                résultant de l'utilisation ou de l'impossibilité d'utiliser le service.
+            </p>
+            
+            <h2>6. Modifications</h2>
+            <p>
+                Nous nous réservons le droit de modifier ces conditions à tout moment. 
+                Les modifications entrent en vigueur dès leur publication sur le site.
+            </p>
+            
+            <h2>7. Contact</h2>
+            <p>
+                Pour toute question concernant ces conditions, contactez-nous via la 
+                <a href="{% url 'blog:contact' %}">page de contact</a>.
+            </p>
+            
+        </div>
+        
+        <!-- Back Link -->
+        <div class="text-center mt-12">
+            <a href="{% url 'blog:accueil' %}" class="btn btn-ghost gap-2">
+                <i class="ti ti-arrow-left"></i>
+                Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

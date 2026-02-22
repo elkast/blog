@@ -1,0 +1,234 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li><a href="{% url 'admin:contenus_liste' %}">Articles</a></li>
+<li>{% if mode_edition %}Modifier{% else %}Ajouter{% endif %}</li>
+{% endblock %}
+
+{% block page_header %}
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <h1 class="text-2xl lg:text-3xl font-bold text-primary font-heading">
+        {% if mode_edition %}Modifier l'article{% else %}Nouvel article{% endif %}
+    </h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+            <form method="post" class="space-y-6" novalidate>
+                {% csrf_token %}
+                
+                <!-- Section: Informations -->
+                <fieldset class="border-b pb-4">
+                    <legend class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-note-edit" aria-hidden="true"></i>
+                        Informations de l'article
+                    </legend>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label" for="titre">
+                                <span class="label-text font-medium">Titre <span class="text-error" aria-label="requis">*</span></span>
+                            </label>
+                            <input type="text" id="titre" name="titre"
+                                   value="{{ contenu.titre|default:donnees.titre }}"
+                                   class="input input-bordered {% if erreurs.titre %}input-error{% endif %}"
+                                   placeholder="Titre de l'article" required>
+                            {% if erreurs.titre %}
+                            <p class="label-text-alt text-error mt-1" role="alert">{{ erreurs.titre }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label" for="auteur">
+                                <span class="label-text font-medium">Auteur</span>
+                            </label>
+                            <input type="text" id="auteur" name="auteur" 
+                                   value="{{ contenu.auteur|default:donnees.auteur|default:'Mr Talnan' }}" 
+                                   class="input input-bordered" 
+                                   placeholder="Nom de l'auteur">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="form-control">
+                            <label class="label" for="slug">
+                                <span class="label-text font-medium">Slug (URL) <span class="text-error" aria-label="requis">*</span></span>
+                            </label>
+                            <input type="text" id="slug" name="slug" 
+                                   value="{{ contenu.slug|default:donnees.slug }}" 
+                                   class="input input-bordered {% if erreurs.slug %}input-error{% endif %} {% if mode_edition %}bg-base-200{% endif %}" 
+                                   placeholder="mon-article-academique"
+                                   {% if mode_edition %}readonly{% endif %}>
+                            <p class="label-text-alt mt-1 text-base-content/60">Identifiant unique pour l'URL</p>
+                            {% if erreurs.slug %}
+                            <p class="label-text-alt text-error mt-1" role="alert">{{ erreurs.slug }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label" for="type_article">
+                                <span class="label-text font-medium">Type d'article <span class="text-error" aria-label="requis">*</span></span>
+                            </label>
+                            <select id="type_article" name="type_article" class="select select-bordered w-full">
+                                <option value="article" {% if contenu.type_article == 'article' or donnees.type_article == 'article' %}selected{% endif %}>📝 Article</option>
+                                <option value="publication" {% if contenu.type_article == 'publication' or donnees.type_article == 'publication' %}selected{% endif %}>📄 Publication académique</option>
+                                <option value="recherche" {% if contenu.type_article == 'recherche' or donnees.type_article == 'recherche' %}selected{% endif %}>🔬 Travail de recherche</option>
+                                <option value="actualite" {% if contenu.type_article == 'actualite' or donnees.type_article == 'actualite' %}selected{% endif %}>📰 Actualité</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium">Extrait / Résumé</span>
+                        </label>
+                        <input type="text" name="extrait" 
+                               value="{{ contenu.extrait|default:donnees.extrait }}" 
+                               class="input input-bordered" 
+                               maxlength="500"
+                               placeholder="Résumé court de l'article pour l'aperçu">
+                        <label class="label">
+                            <span class="label-text-alt">Affiché dans les listes et cartes (max 500 caractères)</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium">Contenu de l'article</span>
+                        </label>
+                        <textarea name="contenu" class="textarea textarea-bordered min-h-64" 
+                                  placeholder="Rédigez le contenu de votre article ici...">{{ contenu.contenu|default:donnees.contenu }}</textarea>
+                        <label class="label">
+                            <span class="label-text-alt">Vous pouvez utiliser du Markdown pour la mise en forme</span>
+                        </label>
+                    </div>
+                </fieldset>
+                
+                <!-- Section: Médias -->
+                <fieldset class="border-b pb-4">
+                    <legend class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-image-02" aria-hidden="true"></i>
+                        Médias
+                    </legend>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">URL de l'image principale</span>
+                            </label>
+                            <input type="url" name="image_url" 
+                                   value="{{ contenu.image_url|default:donnees.image_url }}" 
+                                   class="input input-bordered" 
+                                   placeholder="https://exemple.com/image.jpg">
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-medium">Temps de lecture (minutes)</span>
+                            </label>
+                            <input type="number" name="temps_lecture" 
+                                   value="{{ contenu.temps_lecture|default:donnees.temps_lecture }}" 
+                                   class="input input-bordered" 
+                                   min="1" placeholder="5">
+                        </div>
+                    </div>
+                    
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text font-medium">URL de la bannière</span>
+                        </label>
+                        <input type="url" name="banniere_url" 
+                               value="{{ contenu.banniere_url|default:donnees.banniere_url }}" 
+                               class="input input-bordered" 
+                               placeholder="https://exemple.com/banniere.jpg">
+                        <label class="label">
+                            <span class="label-text-alt">Grande image affichée en haut de la page de détail</span>
+                        </label>
+                    </div>
+                </fieldset>
+                
+                <!-- Section: Catégories -->
+                <fieldset class="border-b pb-4">
+                    <legend class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-tags" aria-hidden="true"></i>
+                        Catégories
+                    </legend>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        {% for cat in categories %}
+                        <label class="flex items-center gap-2 p-3 rounded-lg bg-base-200 hover:bg-base-300 cursor-pointer transition-colors">
+                            <input type="checkbox" name="categories" value="{{ cat.id }}" class="checkbox checkbox-primary checkbox-sm">
+                            <span>{{ cat.nom }}</span>
+                        </label>
+                        {% empty %}
+                        <p class="text-base-content/60 italic">Aucune catégorie disponible</p>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                
+                <!-- Section: Options -->
+                <fieldset class="border-b pb-4">
+                    <legend class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+                        <i class="hgi-stroke hgi-settings-02" aria-hidden="true"></i>
+                        Options de publication
+                    </legend>
+                    
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_publie" class="toggle toggle-success" 
+                                   {% if contenu.est_publie or donnees.est_publie %}checked{% endif %}>
+                            <span>Publié <span class="text-base-content/60 text-sm">(visible sur le site)</span></span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_vedette" class="toggle toggle-warning" 
+                                   {% if contenu.est_vedette or donnees.est_vedette %}checked{% endif %}>
+                            <span>Vedette <span class="text-base-content/60 text-sm">(mis en avant)</span></span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_populaire" class="toggle toggle-secondary" 
+                                   {% if contenu.est_populaire or donnees.est_populaire %}checked{% endif %}>
+                            <span>Populaire</span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="est_nouveau" class="toggle toggle-info" 
+                                   {% if contenu.est_nouveau or donnees.est_nouveau %}checked{% endif %}>
+                            <span>Nouveau</span>
+                        </label>
+                    </div>
+                </fieldset>
+                
+                <!-- Actions -->
+                <div class="flex flex-wrap gap-3 pt-4">
+                    <button type="submit" class="btn btn-primary btn-lg gap-2">
+                        <i class="hgi-stroke hgi-floppy-disk" aria-hidden="true"></i>
+                        {% if mode_edition %}Enregistrer les modifications{% else %}Créer l'article{% endif %}
+                    </button>
+                    <a href="{% url 'admin:contenus_liste' %}" class="btn btn-ghost btn-lg gap-2">
+                        <i class="hgi-stroke hgi-cancel-01" aria-hidden="true"></i>
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('titre').addEventListener('input', function() {
+    const slugField = document.getElementById('slug');
+    if (!slugField.readOnly && !slugField.value) {
+        slugField.value = this.value
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+});
+</script>
+{% endblock %}

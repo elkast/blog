@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% comment %} 
+Liste des articles/contenus - Bulma CSS
+Blog Académique Mr Talnan
+{% endcomment %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="hero-banner" style="min-height: 40vh; padding: 4rem 0;">
+    <div class="container has-text-centered">
+        <h1 class="title is-1 has-text-white mb-4">{{ titre_page }}</h1>
+        <p class="subtitle is-5 has-text-white-ter mb-5">
+            Découvrez <strong>{{ contenus.paginator.count }}</strong> 
+            publication{{ contenus.paginator.count|pluralize:"s" }}
+            {% if request.GET.categorie %} dans la catégorie sélectionnée{% endif %}
+        </p>
+        
+        <!-- Search Form -->
+        <form action="{% url 'blog:recherche' %}" method="get" class="search-box" style="margin: 0 auto;">
+            <div class="control has-icons-left" style="flex: 1;">
+                <input class="input is-medium" type="search" name="q" placeholder="Rechercher dans les articles...">
+                <span class="icon is-left"><i class="hgi-stroke hgi-search-01"></i></span>
+            </div>
+            <button type="submit" class="button is-secondary is-medium">Rechercher</button>
+        </form>
+    </div>
+</section>
+
+<!-- Filters & Content -->
+<section class="section bg-light">
+    <div class="container">
+        
+        <!-- Category Filters -->
+        <nav class="buttons is-centered mb-6">
+            <a href="{% url 'blog:liste_articles' %}" 
+               class="button {% if not request.GET.categorie %}is-primary{% else %}is-light{% endif %}">
+                <span class="icon"><i class="hgi-stroke hgi-note-edit"></i></span>
+                <span>Tous les articles</span>
+            </a>
+            {% for cat in categories %}
+            <a href="?categorie={{ cat.slug }}" 
+               class="button {% if request.GET.categorie == cat.slug %}is-primary{% else %}is-light{% endif %}">
+                {{ cat.nom }}
+            </a>
+            {% endfor %}
+        </nav>
+        
+        <!-- Articles Grid -->
+        {% if contenus %}
+        <div class="columns is-multiline">
+            {% for contenu in contenus %}
+            <div class="column is-4-desktop is-6-tablet">
+                <article class="card">
+                    <a href="{% url 'blog:detail_article' contenu.slug %}" class="card-image img-hover-zoom">
+                        <figure class="image aspect-video" style="position: relative;">
+                            {% if contenu.image_url %}
+                            <img src="{{ contenu.image_url }}" alt="" class="object-cover">
+                            {% elif contenu.image_couverture %}
+                            <img src="{{ contenu.image_couverture }}" alt="" class="object-cover">
+                            {% else %}
+                            <img src="https://picsum.photos/400/250?random={{ forloop.counter }}" alt="" class="object-cover">
+                            {% endif %}
+                            
+                            {% if contenu.est_nouveau %}
+                            <span class="tag is-primary" style="position: absolute; top: 10px; left: 10px;">Nouveau</span>
+                            {% endif %}
+                        </figure>
+                    </a>
+                    
+                    <div class="card-content">
+                        <!-- Meta -->
+                        <p class="is-size-7 text-muted mb-2">
+                            <span class="icon-text">
+                                <span class="icon"><i class="hgi-stroke hgi-user"></i></span>
+                                <span>{{ contenu.auteur|default:'Mr Talnan' }}</span>
+                            </span>
+                            {% if contenu.temps_lecture %}
+                            <span class="ml-3 icon-text">
+                                <span class="icon"><i class="hgi-stroke hgi-clock-01"></i></span>
+                                <span>{{ contenu.temps_lecture }} min</span>
+                            </span>
+                            {% endif %}
+                        </p>
+                        
+                        <h2 class="title is-5 mb-2 line-clamp-2">
+                            <a href="{% url 'blog:detail_article' contenu.slug %}">{{ contenu.titre }}</a>
+                        </h2>
+                        
+                        <p class="is-size-7 text-muted line-clamp-2 mb-3">
+                            {{ contenu.extrait|default:contenu.contenu|truncatewords:20 }}
+                        </p>
+                        
+                        {% if contenu.categories %}
+                        <div class="tags">
+                            <span class="tag is-light">{{ contenu.categories }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if contenus.has_other_pages %}
+        <nav class="pagination is-centered mt-6" role="navigation">
+            {% if contenus.has_previous %}
+            <a href="?page={{ contenus.previous_page_number }}{% if request.GET.categorie %}&categorie={{ request.GET.categorie }}{% endif %}" 
+               class="pagination-previous">
+                <span class="icon"><i class="hgi-stroke hgi-arrow-left-01"></i></span>
+                <span>Précédent</span>
+            </a>
+            {% else %}
+            <a class="pagination-previous" disabled>Précédent</a>
+            {% endif %}
+            
+            {% if contenus.has_next %}
+            <a href="?page={{ contenus.next_page_number }}{% if request.GET.categorie %}&categorie={{ request.GET.categorie }}{% endif %}" 
+               class="pagination-next">
+                <span>Suivant</span>
+                <span class="icon"><i class="hgi-stroke hgi-arrow-right-01"></i></span>
+            </a>
+            {% else %}
+            <a class="pagination-next" disabled>Suivant</a>
+            {% endif %}
+            
+            <ul class="pagination-list">
+                <li><span class="pagination-link is-current">Page {{ contenus.number }} sur {{ contenus.paginator.num_pages }}</span></li>
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <span class="empty-state-icon"><i class="hgi-stroke hgi-note-remove"></i></span>
+            <h2 class="title is-4 mt-4">Aucun article trouvé</h2>
+            <p class="text-muted">Il n'y a pas encore d'articles dans cette catégorie.</p>
+            <a href="{% url 'blog:accueil' %}" class="button is-primary mt-4">
+                <span class="icon"><i class="hgi-stroke hgi-home-01"></i></span>
+                <span>Retour à l'accueil</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="columns is-mobile is-multiline has-text-centered">
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-number">{{ contenus.paginator.count }}</div>
+                    <div class="stat-label">Articles publiés</div>
+                </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-number">{{ categories|length|default:"5" }}</div>
+                    <div class="stat-label">Catégories</div>
+                </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number">1,200+</div>
+                    <div class="stat-label">Lecteurs actifs</div>
+                </div>
+            </div>
+            <div class="column is-6-mobile is-3-tablet">
+                <div class="stat-item">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-number">4.8</div>
+                    <div class="stat-label">Note moyenne</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section bg-dark has-text-centered" style="background-color: var(--bg-dark);">
+    <div class="container">
+        <h2 class="title is-3 has-text-white mb-4">Restez informé de nos dernières publications</h2>
+        <p class="has-text-grey-light mb-5">Recevez nos articles directement dans votre boîte mail</p>
+        <div class="buttons is-centered">
+            <a href="{% url 'blog:contact' %}" class="button is-primary">
+                <span class="icon"><i class="hgi-stroke hgi-mail-01"></i></span>
+                <span>Me contacter</span>
+            </a>
+            <a href="{% url 'blog:liste_livres' %}" class="button is-outlined is-light">
+                <span class="icon"><i class="hgi-stroke hgi-book-02"></i></span>
+                <span>Voir les livres</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

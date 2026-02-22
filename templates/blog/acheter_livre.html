@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% comment %} Page d'achat d'un livre - daisyUI {% endcomment %}
+
+{% block content %}
+<section class="py-8 lg:py-12 bg-base-200 min-h-screen">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumbs text-sm mb-8">
+            <ul>
+                <li><a href="{% url 'blog:accueil' %}"><i class="ti ti-home mr-1"></i>Accueil</a></li>
+                <li><a href="{% url 'blog:liste_livres' %}">Livres</a></li>
+                <li><a href="{% url 'blog:detail_livre' livre.slug %}">{{ livre.titre|truncatewords:3 }}</a></li>
+                <li class="opacity-70">Commander</li>
+            </ul>
+        </div>
+        
+        <div class="checkout-layout">
+            <!-- Checkout Form -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h1 class="card-title text-2xl font-heading text-primary-custom mb-6">
+                        <i class="ti ti-shopping-cart mr-2"></i>
+                        Commander le livre
+                    </h1>
+                    
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Personal Info Section -->
+                        <div>
+                            <h2 class="text-lg font-semibold mb-4 pb-2 border-b border-base-200">
+                                <i class="ti ti-user mr-2 text-primary-custom"></i>
+                                Vos informations
+                            </h2>
+                            
+                            <div class="space-y-4">
+                                <!-- Name -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-medium">Nom complet *</span>
+                                    </label>
+                                    <input type="text" id="nom" name="nom" required 
+                                           class="input input-bordered {% if erreurs.nom %}input-error{% endif %}"
+                                           value="{{ request.POST.nom|default:'' }}"
+                                           placeholder="Votre nom complet" />
+                                    {% if erreurs.nom %}
+                                    <label class="label">
+                                        <span class="label-text-alt text-error">{{ erreurs.nom }}</span>
+                                    </label>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Email -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-medium">Email *</span>
+                                    </label>
+                                    <input type="email" id="email" name="email" required
+                                           class="input input-bordered {% if erreurs.email %}input-error{% endif %}"
+                                           value="{{ request.POST.email|default:'' }}"
+                                           placeholder="votre@email.com" />
+                                    {% if erreurs.email %}
+                                    <label class="label">
+                                        <span class="label-text-alt text-error">{{ erreurs.email }}</span>
+                                    </label>
+                                    {% else %}
+                                    <label class="label">
+                                        <span class="label-text-alt opacity-60">Le lien de téléchargement sera envoyé à cette adresse</span>
+                                    </label>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Phone -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-medium">Téléphone (optionnel)</span>
+                                    </label>
+                                    <input type="tel" id="telephone" name="telephone"
+                                           class="input input-bordered"
+                                           value="{{ request.POST.telephone|default:'' }}"
+                                           placeholder="+225 XX XX XX XX XX" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit -->
+                        <div class="mt-8">
+                            <button type="submit" class="btn btn-primary btn-lg w-full gap-2">
+                                <i class="ti ti-credit-card"></i>
+                                Procéder au paiement - {{ livre.prix|floatformat:0 }} FCFA
+                            </button>
+                        </div>
+                        
+                        <p class="text-center text-sm opacity-60 mt-4">
+                            En passant commande, vous acceptez nos 
+                            <a href="{% url 'blog:conditions' %}" class="link link-primary">conditions générales</a> et notre 
+                            <a href="{% url 'blog:confidentialite' %}" class="link link-primary">politique de confidentialité</a>.
+                        </p>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="sticky-sidebar">
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title text-lg mb-4">
+                            <i class="ti ti-receipt mr-2 text-primary-custom"></i>
+                            Votre commande
+                        </h2>
+                        
+                        <!-- Book Preview -->
+                        <div class="flex gap-4 pb-4 border-b border-base-200">
+                            <figure class="w-20 h-28 rounded-lg overflow-hidden shadow flex-shrink-0">
+                                {% if livre.image_couverture %}
+                                <img src="{{ livre.image_couverture }}" alt="{{ livre.titre }}" class="w-full h-full object-cover" />
+                                {% else %}
+                                <img src="https://picsum.photos/100/150?random=1" alt="{{ livre.titre }}" class="w-full h-full object-cover" />
+                                {% endif %}
+                            </figure>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold line-clamp-2">{{ livre.titre }}</h3>
+                                <p class="text-sm opacity-70">{{ livre.auteur }}</p>
+                                {% if livre.nombre_pages %}
+                                <p class="text-xs opacity-50 mt-1">{{ livre.nombre_pages }} pages</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Price Summary -->
+                        <div class="py-4 space-y-2">
+                            <div class="summary-line">
+                                <span class="opacity-70">Livre (PDF)</span>
+                                <span>{{ livre.prix|floatformat:0 }} FCFA</span>
+                            </div>
+                            <div class="summary-line total">
+                                <span>Total</span>
+                                <span class="text-primary-custom">{{ livre.prix|floatformat:0 }} FCFA</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Info -->
+                        <div class="pt-4 border-t border-base-200 space-y-3 text-sm opacity-70">
+                            <p class="flex items-center gap-2">
+                                <i class="ti ti-download text-success"></i>
+                                Téléchargement immédiat après paiement
+                            </p>
+                            <p class="flex items-center gap-2">
+                                <i class="ti ti-mail text-info"></i>
+                                Lien envoyé par email
+                            </p>
+                            <p class="flex items-center gap-2">
+                                <i class="ti ti-lock text-warning"></i>
+                                Paiement sécurisé
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

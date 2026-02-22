@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- SEO Meta -->
+    <title>{% block title %}{{ titre_page|default:"Accueil" }}{% endblock %} | {{ config_site.nom_site|default:"Blog Mr Talnan" }}</title>
+    <meta name="description" content="{% block description %}{{ config_site.description_site|default:'Blog académique - Articles, recherches et publications depuis l\'Afrique vers le monde' }}{% endblock %}">
+    <meta name="keywords" content="{{ config_site.mots_cles|default:'professeur, université, recherche, publications, livres, Afrique, FCFA, académique' }}">
+    <meta name="author" content="Mr Talnan">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}{{ titre_page|default:'Accueil' }} | {{ config_site.nom_site|default:'Blog Mr Talnan' }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ config_site.description_site|default:'Blog académique - Partage de savoirs depuis l\'Afrique vers le monde' }}{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:site_name" content="Blog Mr Talnan">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ titre_page|default:'Accueil' }} | Blog Mr Talnan">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Hugeicons -->
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css">
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    
+    <!-- Custom Styles -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    
+    <!-- Header -->
+    {% include 'components/header.html' %}
+    
+    <!-- Flash Messages -->
+    {% if messages %}
+    <div class="container" style="position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 50; max-width: 500px;">
+        {% for message in messages %}
+        <div class="notification {% if message.tags == 'success' %}is-success{% elif message.tags == 'error' %}is-danger{% elif message.tags == 'warning' %}is-warning{% else %}is-info{% endif %} is-light">
+            <button class="delete" onclick="this.parentElement.remove()"></button>
+            <span class="icon">
+                <i class="hgi-stroke {% if message.tags == 'success' %}hgi-checkmark-circle-02{% elif message.tags == 'error' %}hgi-alert-circle{% elif message.tags == 'warning' %}hgi-alert-02{% else %}hgi-information-circle{% endif %}"></i>
+            </span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    {% include 'components/footer.html' %}
+    
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle no-print">
+        <button class="button" onclick="toggleTheme()" aria-label="Changer le thème">
+            <i class="hgi-stroke hgi-moon-02 theme-icon-dark"></i>
+            <i class="hgi-stroke hgi-sun-03 theme-icon-light"></i>
+        </button>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        // Theme management
+        function getPreferredTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved) return saved;
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+        
+        // Initialize theme
+        setTheme(getPreferredTheme());
+        
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const burgers = document.querySelectorAll('.navbar-burger');
+            burgers.forEach(burger => {
+                burger.addEventListener('click', () => {
+                    const targetId = burger.dataset.target;
+                    const target = document.getElementById(targetId);
+                    burger.classList.toggle('is-active');
+                    target.classList.toggle('is-active');
+                });
+            });
+            
+            // Auto-dismiss notifications
+            document.querySelectorAll('.notification').forEach(notif => {
+                setTimeout(() => {
+                    notif.style.opacity = '0';
+                    notif.style.transform = 'translateY(-20px)';
+                    notif.style.transition = 'all 0.3s ease';
+                    setTimeout(() => notif.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

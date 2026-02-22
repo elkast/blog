@@ -1,0 +1,36 @@
+{% comment %}
+Composant Section Grille - daisyUI
+Variables requises:
+    - titre: Titre de la section
+    - contenus: Liste des contenus à afficher
+    - lien_voir_plus: URL pour "Voir tout" (optionnel)
+    - colonnes: Nombre de colonnes (default: 4)
+{% endcomment %}
+
+{% with colonnes=colonnes|default:4 %}
+<section class="py-12 bg-base-200">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <h2 class="text-2xl font-heading font-bold text-primary-custom">{{ titre }}</h2>
+            {% if lien_voir_plus %}
+            <a href="{{ lien_voir_plus }}" class="btn btn-ghost btn-sm gap-1 text-primary-custom">
+                Voir tout
+                <i class="ti ti-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        
+        <!-- Grid -->
+        <div class="content-grid-{{ colonnes }}">
+            {% for contenu in contenus %}
+            {% include 'components/carte_contenu.html' with contenu=contenu %}
+            {% empty %}
+            <div class="col-span-full text-center py-8 opacity-60">
+                <p>Aucun contenu disponible.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endwith %}

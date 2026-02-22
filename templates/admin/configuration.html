@@ -1,0 +1,192 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li>Configuration</li>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Identité du Professeur -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-primary gap-2 mb-4">
+                    <i class="hgi-stroke hgi-user-circle" aria-hidden="true"></i>
+                    Identité du Professeur
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Nom complet</span>
+                        </label>
+                        <input type="text" name="nom_professeur" 
+                               value="{{ config.nom_professeur|default:'Mr Talnan' }}" 
+                               class="input input-bordered">
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Titre académique</span>
+                        </label>
+                        <input type="text" name="titre_academique" 
+                               value="{{ config.titre_academique }}" 
+                               class="input input-bordered">
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Spécialité</span>
+                        </label>
+                        <input type="text" name="specialite" 
+                               value="{{ config.specialite }}" 
+                               class="input input-bordered">
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Université / Institution</span>
+                        </label>
+                        <input type="text" name="universite" 
+                               value="{{ config.universite }}" 
+                               class="input input-bordered">
+                    </div>
+                </div>
+                
+                <div class="form-control mt-4">
+                    <label class="label">
+                        <span class="label-text font-medium">Texte de présentation</span>
+                    </label>
+                    <textarea name="a_propos" class="textarea textarea-bordered min-h-32">{{ config.a_propos }}</textarea>
+                    <label class="label">
+                        <span class="label-text-alt">Texte affiché sur la page "À propos" et dans le footer</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Paramètres du Site -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-primary gap-2 mb-4">
+                    <i class="hgi-stroke hgi-global" aria-hidden="true"></i>
+                    Paramètres du Site
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Nom du site</span>
+                        </label>
+                        <input type="text" name="nom_site" 
+                               value="{{ config.nom_site }}" 
+                               class="input input-bordered">
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Titre du site</span>
+                        </label>
+                        <input type="text" name="titre_site" 
+                               value="{{ config.titre_site }}" 
+                               class="input input-bordered">
+                    </div>
+                </div>
+                
+                <div class="form-control mt-4">
+                    <label class="label">
+                        <span class="label-text font-medium">Mots-clés SEO</span>
+                    </label>
+                    <input type="text" name="mots_cles" 
+                           value="{{ config.mots_cles }}" 
+                           class="input input-bordered">
+                    <label class="label">
+                        <span class="label-text-alt">Séparez les mots-clés par des virgules</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informations de Contact -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-primary gap-2 mb-4">
+                    <i class="hgi-stroke hgi-call" aria-hidden="true"></i>
+                    Informations de Contact
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Email de contact</span>
+                        </label>
+                        <input type="email" name="email_contact" 
+                               value="{{ config.email_contact }}" 
+                               class="input input-bordered">
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">Téléphone</span>
+                        </label>
+                        <input type="text" name="telephone" 
+                               value="{{ config.telephone }}" 
+                               class="input input-bordered">
+                    </div>
+                </div>
+                
+                <div class="form-control mt-4">
+                    <label class="label">
+                        <span class="label-text font-medium">Adresse professionnelle</span>
+                    </label>
+                    <input type="text" name="adresse" 
+                           value="{{ config.adresse }}" 
+                           class="input input-bordered">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Médias -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-primary gap-2 mb-4">
+                    <i class="hgi-stroke hgi-image-02" aria-hidden="true"></i>
+                    Médias
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">URL de la photo de profil</span>
+                        </label>
+                        <input type="url" name="photo_profil" 
+                               value="{{ config.photo_profil }}" 
+                               class="input input-bordered" 
+                               placeholder="https://...">
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-medium">URL du CV en ligne</span>
+                        </label>
+                        <input type="url" name="cv_url" 
+                               value="{{ config.cv_url }}" 
+                               class="input input-bordered" 
+                               placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="flex justify-end">
+            <button type="submit" class="btn btn-primary gap-2">
+                <i class="hgi-stroke hgi-floppy-disk" aria-hidden="true"></i>
+                Enregistrer les modifications
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

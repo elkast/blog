@@ -1,0 +1,118 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumb %}
+<li>Achats</li>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="flex flex-wrap gap-2 mb-6">
+    <a href="{% url 'admin:achats_liste' %}" class="btn {% if not statut_filtre %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-list-view" aria-hidden="true"></i>
+        Tous
+    </a>
+    <a href="?statut=paye" class="btn {% if statut_filtre == 'paye' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-checkmark-circle-02" aria-hidden="true"></i>
+        Payés
+    </a>
+    <a href="?statut=en_attente" class="btn {% if statut_filtre == 'en_attente' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-clock-01" aria-hidden="true"></i>
+        En attente
+    </a>
+    <a href="?statut=echoue" class="btn {% if statut_filtre == 'echoue' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-cancel-01" aria-hidden="true"></i>
+        Échoués
+    </a>
+    <a href="?statut=rembourse" class="btn {% if statut_filtre == 'rembourse' %}btn-primary{% else %}btn-ghost{% endif %} btn-sm gap-2">
+        <i class="hgi-stroke hgi-refresh" aria-hidden="true"></i>
+        Remboursés
+    </a>
+</div>
+
+<!-- Table Card -->
+<div class="card bg-base-100 shadow-lg">
+    <div class="card-body p-0">
+        <div class="overflow-x-auto">
+            <table class="table">
+                <thead>
+                    <tr class="bg-base-200">
+                        <th>ID</th>
+                        <th>Client</th>
+                        <th>Livre</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Téléchargements</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for achat in achats %}
+                    <tr class="hover">
+                        <td><span class="font-mono font-bold">#{{ achat.id }}</span></td>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="avatar placeholder">
+                                    <div class="bg-neutral text-neutral-content rounded-full w-10">
+                                        <span>{{ achat.nom_client|slice:":1"|upper }}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="font-medium">{{ achat.nom_client }}</div>
+                                    <div class="text-sm text-base-content/60">{{ achat.email_client }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ achat.livre_titre|default:"Livre supprimé"|truncatechars:25 }}</td>
+                        <td><span class="font-semibold">{{ achat.montant }} {{ achat.devise }}</span></td>
+                        <td class="text-sm text-base-content/70">{{ achat.date_achat }}</td>
+                        <td>
+                            {% if achat.statut == 'paye' %}
+                            <span class="badge badge-success gap-1">
+                                <i class="hgi-stroke hgi-checkmark-circle-02 text-xs" aria-hidden="true"></i> Payé
+                            </span>
+                            {% elif achat.statut == 'en_attente' %}
+                            <span class="badge badge-warning gap-1">
+                                <i class="hgi-stroke hgi-clock-01 text-xs" aria-hidden="true"></i> En attente
+                            </span>
+                            {% elif achat.statut == 'echoue' %}
+                            <span class="badge badge-error gap-1">
+                                <i class="hgi-stroke hgi-cancel-01 text-xs" aria-hidden="true"></i> Échoué
+                            </span>
+                            {% else %}
+                            <span class="badge badge-info gap-1">
+                                <i class="hgi-stroke hgi-refresh text-xs" aria-hidden="true"></i> Remboursé
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="flex items-center gap-1">
+                                <i class="hgi-stroke hgi-download-04 text-sm text-base-content/60" aria-hidden="true"></i>
+                                {{ achat.nombre_telechargements }}/{{ achat.max_telechargements }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'admin:achats_detail' achat.id %}" class="btn btn-ghost btn-sm btn-square" title="Voir détails">
+                                <i class="hgi-stroke hgi-view text-lg" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-16">
+                            <div class="flex flex-col items-center gap-4">
+                                <i class="hgi-stroke hgi-shopping-cart-remove text-6xl text-base-content/30" aria-hidden="true"></i>
+                                <div>
+                                    <h3 class="text-lg font-semibold">Aucun achat</h3>
+                                    <p class="text-base-content/60">Aucun achat enregistré pour le moment.</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

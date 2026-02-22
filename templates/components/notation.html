@@ -1,0 +1,22 @@
+{% comment %}
+Composant Notation - daisyUI Rating
+Variables requises:
+    - note: Valeur numérique de 0 à 5
+    - afficher_valeur: Boolean pour afficher la valeur numérique (default: True)
+{% endcomment %}
+
+{% with afficher_valeur=afficher_valeur|default:True %}
+<div class="flex items-center gap-1">
+    <div class="rating rating-sm">
+        {% with note_int=note|floatformat:0|default:0 %}
+        {% for i in "12345" %}
+        <input type="radio" class="mask mask-star-2 bg-warning" disabled 
+               {% if forloop.counter <= note_int|add:0 %}checked{% endif %} />
+        {% endfor %}
+        {% endwith %}
+    </div>
+    {% if afficher_valeur %}
+    <span class="text-sm font-semibold">{{ note|floatformat:1 }}</span>
+    {% endif %}
+</div>
+{% endwith %}

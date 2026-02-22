@@ -1,0 +1,139 @@
+{% comment %} 
+Footer Component - Bulma Footer
+Blog Académique Mr Talnan
+{% endcomment %}
+
+<footer class="footer">
+    <div class="container">
+        <div class="columns">
+            <!-- Brand & Social -->
+            <div class="column is-4">
+                <a href="{% url 'blog:accueil' %}" class="footer-brand">
+                    <span>📚</span>
+                    <span>Blog Mr Talnan</span>
+                </a>
+                <p class="footer-description">
+                    Blog académique - Articles, recherches, publications et livres.
+                    Partage de savoirs depuis l'Afrique vers le monde entier.
+                </p>
+                
+                <p class="has-text-grey-light is-size-7 mt-4 mb-2" style="text-transform: uppercase; letter-spacing: 0.05em;">Profils académiques</p>
+                <div class="footer-social">
+                    {% for reseau in reseaux_sociaux %}
+                    <a href="{{ reseau.url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ reseau.nom }}">
+                        <i class="hgi-stroke {{ reseau.icone }}"></i>
+                    </a>
+                    {% empty %}
+                    <a href="#" aria-label="ResearchGate"><i class="hgi-stroke hgi-test-tube"></i></a>
+                    <a href="#" aria-label="Google Scholar"><i class="hgi-stroke hgi-mortarboard-02"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="hgi-stroke hgi-linkedin-02"></i></a>
+                    <a href="#" aria-label="ORCID"><i class="hgi-stroke hgi-id"></i></a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Publications -->
+            <div class="column is-2">
+                <h4 class="footer-title">Publications</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'blog:liste_articles' %}">Articles</a></li>
+                    <li><a href="{% url 'blog:liste_publications' %}">Publications</a></li>
+                    <li><a href="{% url 'blog:liste_recherches' %}">Recherches</a></li>
+                </ul>
+            </div>
+            
+            <!-- Livres -->
+            <div class="column is-2">
+                <h4 class="footer-title">Livres</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'blog:liste_livres' %}">Tous les livres</a></li>
+                    <li><a href="{% url 'blog:liste_livres' %}?gratuit=1">Livres gratuits</a></li>
+                    <li><a href="{% url 'blog:liste_livres' %}?nouveau=1">Nouveautés</a></li>
+                </ul>
+            </div>
+            
+            <!-- Informations -->
+            <div class="column is-2">
+                <h4 class="footer-title">Informations</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'blog:a_propos' %}">À propos</a></li>
+                    <li><a href="{% url 'blog:cv' %}">CV & Parcours</a></li>
+                    <li><a href="{% url 'blog:contact' %}">Contact</a></li>
+                    <li><a href="{% url 'blog:conditions' %}">Mentions Légales</a></li>
+                </ul>
+            </div>
+            
+            <!-- Newsletter -->
+            <div class="column is-2">
+                <h4 class="footer-title">Newsletter</h4>
+                <p class="is-size-7 has-text-grey-light mb-3">
+                    Recevez nos dernières publications directement dans votre boîte mail.
+                </p>
+                <form class="newsletter-form" id="newsletter-form">
+                    <input type="email" class="input is-small" name="email" placeholder="Votre email" required>
+                    <button type="submit" class="button is-primary is-small">
+                        <span class="icon"><i class="hgi-stroke hgi-sent"></i></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bottom -->
+        <div class="footer-bottom">
+            <div class="columns is-vcentered">
+                <div class="column">
+                    <p>© 2026 Blog Académique Mr Talnan. Tous droits réservés.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Newsletter Script -->
+<script>
+document.getElementById('newsletter-form')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = this.querySelector('input[name="email"]').value;
+    const btn = this.querySelector('button[type="submit"]');
+    const originalHTML = btn.innerHTML;
+    
+    btn.innerHTML = '<span class="icon"><i class="hgi-stroke hgi-loading-03" style="animation: spin 1s linear infinite;"></i></span>';
+    btn.disabled = true;
+    
+    fetch('{% url "blog:api_newsletter" %}', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(r => r.json())
+    .then(data => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        
+        const notif = document.createElement('div');
+        notif.className = 'notification ' + (data.success ? 'is-success' : 'is-danger') + ' is-light';
+        notif.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 100; max-width: 300px;';
+        notif.innerHTML = '<button class="delete" onclick="this.parentElement.remove()"></button>' + 
+            (data.success ? 'Inscription réussie ! Merci.' : (data.message || 'Erreur lors de l\'inscription.'));
+        document.body.appendChild(notif);
+        
+        if (data.success) this.reset();
+        setTimeout(() => notif.remove(), 4000);
+    })
+    .catch(() => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        
+        const notif = document.createElement('div');
+        notif.className = 'notification is-danger is-light';
+        notif.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 100; max-width: 300px;';
+        notif.innerHTML = '<button class="delete" onclick="this.parentElement.remove()"></button>Erreur de connexion.';
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 4000);
+    });
+});
+</script>
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>

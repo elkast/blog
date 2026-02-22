@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% comment %} Page de paiement - daisyUI {% endcomment %}
+
+{% block content %}
+<section class="py-12 lg:py-20 bg-base-200 min-h-screen">
+    <div class="container mx-auto px-4">
+        <div class="max-w-lg mx-auto">
+            <div class="card bg-base-100 shadow-2xl">
+                <div class="card-body text-center p-8">
+                    <!-- Header -->
+                    <div class="mb-8">
+                        <div class="w-16 h-16 mx-auto bg-primary-custom/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="ti ti-credit-card text-3xl text-primary-custom"></i>
+                        </div>
+                        <h1 class="text-2xl font-heading font-bold text-primary-custom">Paiement sécurisé</h1>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="bg-base-200 p-6 rounded-xl text-left mb-8">
+                        <h2 class="text-sm font-semibold uppercase tracking-wide opacity-60 mb-4">Récapitulatif</h2>
+                        <div class="space-y-2 text-sm">
+                            <p><span class="opacity-70">Livre:</span> <strong>{{ achat.livre_titre }}</strong></p>
+                            <p><span class="opacity-70">Client:</span> {{ achat.nom_client }}</p>
+                            <p><span class="opacity-70">Email:</span> {{ achat.email_client }}</p>
+                        </div>
+                        <div class="divider my-4"></div>
+                        <p class="text-lg font-bold flex justify-between">
+                            <span>Montant:</span>
+                            <span class="text-primary-custom">{{ achat.montant|floatformat:0 }} FCFA</span>
+                        </p>
+                    </div>
+                    
+                    <!-- Payment Methods -->
+                    <div class="text-left mb-8">
+                        <h2 class="text-sm font-semibold uppercase tracking-wide opacity-60 mb-4">Mode de paiement</h2>
+                        
+                        <div class="space-y-3">
+                            <label class="method-option cursor-pointer">
+                                <input type="radio" name="method" value="card" checked class="radio radio-primary" />
+                                <span class="flex items-center gap-3 ml-3">
+                                    <i class="ti ti-credit-card text-xl text-primary-custom"></i>
+                                    <span>Carte bancaire</span>
+                                </span>
+                            </label>
+                            
+                            <label class="method-option cursor-pointer">
+                                <input type="radio" name="method" value="mobile_money" class="radio radio-primary" />
+                                <span class="flex items-center gap-3 ml-3">
+                                    <i class="ti ti-device-mobile text-xl text-orange-500"></i>
+                                    <span>Mobile Money (Orange, MTN, Wave)</span>
+                                </span>
+                            </label>
+                            
+                            <label class="method-option cursor-pointer">
+                                <input type="radio" name="method" value="wave" class="radio radio-primary" />
+                                <span class="flex items-center gap-3 ml-3">
+                                    <i class="ti ti-wave-sine text-xl text-blue-500"></i>
+                                    <span>Wave</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-lg w-full gap-2">
+                            <i class="ti ti-lock"></i>
+                            Confirmer le paiement de {{ achat.montant|floatformat:0 }} FCFA
+                        </button>
+                    </form>
+                    
+                    <!-- Security Notice -->
+                    <p class="flex items-center justify-center gap-2 text-sm opacity-60 mt-6">
+                        <i class="ti ti-shield-check text-success"></i>
+                        Vos données sont protégées et le paiement est sécurisé.
+                    </p>
+                    
+                    <!-- Back Link -->
+                    <a href="{% url 'blog:acheter_livre' achat.livre_slug %}" class="btn btn-ghost btn-sm mt-4 gap-1">
+                        <i class="ti ti-arrow-left"></i>
+                        Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
